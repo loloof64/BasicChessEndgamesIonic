@@ -1,5 +1,7 @@
 {
   "name": "Basic Chess Endgames",
-  "integrations": {},
+  "integrations": {
+    "capacitor": {}
+  },
   "type": "angular"
 }
