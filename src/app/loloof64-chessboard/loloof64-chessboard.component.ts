@@ -1,6 +1,6 @@
-import { 
+import {
   Component, OnInit, Renderer2, ElementRef, Input, ViewChild,
-  OnChanges, SimpleChanges, SimpleChange,  
+  OnChanges, SimpleChanges,
 } from '@angular/core';
 
 @Component({
@@ -10,7 +10,7 @@ import {
 })
 export class Loloof64ChessboardComponent implements OnInit, OnChanges {
 
-  @Input() size = '200px';
+  @Input() size = 200.0;
   @Input() position = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 
   @ViewChild('root') root: ElementRef;
@@ -23,8 +23,8 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
   constructor(private renderer: Renderer2) { }
 
   ngOnInit() {
-    this.root.nativeElement.style.width = this.size;
-    this.root.nativeElement.style.height = this.size;
+    this.root.nativeElement.style.width = this.size + 'px';
+    this.root.nativeElement.style.height = this.size + 'px';
     this.imagesReferences = this.imagesFromPosition();
   }
 
@@ -53,11 +53,11 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
   }
 
   pieceSize(): number {
-    return parseFloat(this.size) * 0.12;
+    return this.size * 0.1;
   }
-  
-  fontSize(): number {
-    return parseFloat(this.size) * 0.08;
+
+  coordinateFontSize(): number {
+    return this.size * 0.04;
   }
 
   turnClass(): string {
