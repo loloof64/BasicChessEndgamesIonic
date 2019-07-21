@@ -31,10 +31,12 @@
 }
 
 .white-cell {
+    @include standard-cell();
     background-color: rgb(192, 158, 48);
 }
 
 .black-cell {
+    @include standard-cell();
     background-color: rgb(100, 35, 0);
 }
   

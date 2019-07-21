@@ -53,7 +53,7 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
   }
 
   pieceSize(): number {
-    return parseFloat(this.size) * 0.08;
+    return parseFloat(this.size) * 0.12;
   }
   
   fontSize(): number {
