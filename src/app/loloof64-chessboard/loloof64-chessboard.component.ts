@@ -12,6 +12,7 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
 
   @Input() size = 200.0;
   @Input() position = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+  @Input() reversed = false;
 
   @ViewChild('root') root: ElementRef;
 
@@ -41,11 +42,11 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
   }
 
   fileCoordinate(file: number): string {
-    return this.allFilesCoordinates[file];
+    return this.allFilesCoordinates[this.reversed ? 7 - file : file];
   }
 
   rankCoordinate(rank: number): string {
-    return this.allRanksCoordinates[7 - rank];
+    return this.allRanksCoordinates[this.reversed ? rank : 7 - rank];
   }
 
   imageDefinedFor(file: number, rank: number): boolean {
@@ -68,15 +69,13 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
   private imagesFromPosition(): string[][] {
     let boardValues = this.position.split(' ')[0].split('/').reverse();
 
-    /*
     if (this.reversed) {
       boardValues = boardValues.reverse();
-      for (let rank = 0; rank < 8; rank++){
+      for (let rank = 0; rank < 8; rank++) {
         // reverse the string
-        boardValues[rank] = boardValues[rank].split("").reverse().join("");
+        boardValues[rank] = boardValues[rank].split('').reverse().join('');
       }
     }
-    */
 
     let result = [];
 
