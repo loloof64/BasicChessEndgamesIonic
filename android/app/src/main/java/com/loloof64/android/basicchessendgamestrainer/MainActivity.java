@@ -1,4 +1,4 @@
-package io.ionic.starter;
+package com.loloof64.android.basicchessendgamestrainer;
 
 import android.os.Bundle;
 
