@@ -59,6 +59,11 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
   fontSize(): number {
     return parseFloat(this.size) * 0.08;
   }
+
+  turnClass(): string {
+    const blackToPlay = this.position.split(' ')[1].charAt(0) === 'b';
+    return blackToPlay ? 'turn-black' : 'turn-white';
+  }
   
   private imagesFromPosition(): string[][] {
     let boardValues = this.position.split(' ')[0].split('/').reverse();

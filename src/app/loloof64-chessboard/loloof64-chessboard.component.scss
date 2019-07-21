@@ -22,12 +22,16 @@
     @include standard-cell();
 }
 
-.turn-cell {
+.turn-white {
     @include standard-cell();
+    border-radius: 100%;
+    background-color: #FFF;
 }
 
-.turn-cell-indicator {
+.turn-black {
+    @include standard-cell();
     border-radius: 100%;
+    background-color: #000;
 }
 
 .white-cell {
