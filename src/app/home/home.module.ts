@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
 import { HomePage } from './home.page';
-import { Loloof64ChessboardComponent } from '../loloof64-chessboard/loloof64-chessboard.component';
+import { Loloof64ChessboardComponent } from '../components/loloof64-chessboard/loloof64-chessboard.component';
 
 @NgModule({
   imports: [

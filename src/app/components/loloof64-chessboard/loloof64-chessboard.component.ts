@@ -2,7 +2,7 @@ import {
   Component, OnInit, Renderer2, ElementRef, Input, ViewChild,
   OnChanges, SimpleChanges,
 } from '@angular/core';
-import { ChessCell, Loloof64ChessLogicService } from '../services/loloof64-chess-logic.service';
+import { ChessCell, Loloof64ChessLogicService } from '../../services/loloof64-chess-logic.service';
 
 @Component({
   selector: 'loloof64-chessboard',
@@ -137,6 +137,14 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
     }
 
     return result;
+  }
+
+  startDnd(row: number, col: number) {
+    
+  }
+
+  endDnd(row: number, col: number) {
+
   }
 
 }

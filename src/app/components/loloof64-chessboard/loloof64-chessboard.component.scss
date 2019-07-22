@@ -43,4 +43,9 @@
     @include standard-cell();
     background-color: rgb(100, 35, 0);
 }
+
+.dnd-start-cell {
+    @include standard-cell();
+    background-color: rgb(200, 10, 20);
+}
   
