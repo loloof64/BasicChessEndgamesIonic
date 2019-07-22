@@ -6,6 +6,7 @@ import { RouterModule } from '@angular/router';
 
 import { HomePage } from './home.page';
 import { Loloof64ChessboardComponent } from '../components/loloof64-chessboard/loloof64-chessboard.component';
+import { Loloof64ChessboardCellComponent } from '../components/loloof64-chessboard/loloof64-chessboard-cell/loloof64-chessboard-cell.component';
 
 @NgModule({
   imports: [
@@ -19,6 +20,10 @@ import { Loloof64ChessboardComponent } from '../components/loloof64-chessboard/l
       }
     ])
   ],
-  declarations: [HomePage, Loloof64ChessboardComponent],
+  declarations: [
+    HomePage,
+    Loloof64ChessboardComponent,
+    Loloof64ChessboardCellComponent
+  ],
 })
 export class HomePageModule {}

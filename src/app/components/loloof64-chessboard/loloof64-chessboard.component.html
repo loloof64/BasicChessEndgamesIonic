@@ -1,12 +1,12 @@
 <div class="board-root" #root>
   <ng-container>
-    <div class="empty-cell"></div>
+    <div class="empty-zone"></div>
     <div 
       class="coord"
       *ngFor="let col of [0,1,2,3,4,5,6,7]"
       [style.font-size.px]="coordinateFontSize()"
     >{{fileCoordinate(col)}}</div>
-    <div class="empty-cell"></div>
+    <div class="empty-zone"></div>
   </ng-container>
 
   <ng-container *ngFor="let row of [0,1,2,3,4,5,6,7]">
@@ -14,12 +14,14 @@
       class="coord"
       [style.font-size.px]="coordinateFontSize()"
     >{{rankCoordinate(row)}}</div>
-    <div *ngFor="let col of [0,1,2,3,4,5,6,7]" [class]="cellColorClass(col, row)" (dragstart)="startDnd(row, col)">
-      <img *ngIf="imageDefinedFor(col, 7-row)" 
-        [src]="'/assets/vectors/'+imagesReferences[7-row][col]"
-        [width]="pieceSize()" [height]="pieceSize()" 
-      />
-    </div>
+    <loloof64-chessboard-cell 
+      *ngFor="let col of [0,1,2,3,4,5,6,7]" 
+      (dragstart)="startDnd(col, row)"
+      [file]="getFile(col)"
+      [rank]="getRank(row)"
+      [value]="getPieceValue(col, row)"
+    >
+    </loloof64-chessboard-cell>
     <div 
       class="coord"
       [style.font-size.px]="coordinateFontSize()"
@@ -27,13 +29,13 @@
   </ng-container>
 
   <ng-container>
-      <div class="empty-cell"></div>
+      <div class="empty-zone"></div>
       <div 
         class="coord" 
         *ngFor="let col of [0,1,2,3,4,5,6,7]"
         [style.font-size.px]="coordinateFontSize()"
       >{{fileCoordinate(col)}}</div>
-      <div class="empty-cell">
+      <div class="empty-zone">
         <div [class]="turnClass()"></div>
       </div>
     </ng-container>

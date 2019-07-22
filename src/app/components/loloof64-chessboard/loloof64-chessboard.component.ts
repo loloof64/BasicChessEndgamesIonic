@@ -2,7 +2,7 @@ import {
   Component, OnInit, Renderer2, ElementRef, Input, ViewChild,
   OnChanges, SimpleChanges,
 } from '@angular/core';
-import { ChessCell, Loloof64ChessLogicService } from '../../services/loloof64-chess-logic.service';
+import { Loloof64ChessLogicService } from '../../services/loloof64-chess-logic.service';
 
 @Component({
   selector: 'loloof64-chessboard',
@@ -13,7 +13,6 @@ import { ChessCell, Loloof64ChessLogicService } from '../../services/loloof64-ch
 export class Loloof64ChessboardComponent implements OnInit, OnChanges {
 
   @Input() size = 200.0;
-  @Input() position = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
   @Input() reversed = false;
 
   @ViewChild('root') root: ElementRef;
@@ -21,23 +20,21 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
   allFilesCoordinates: string [] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
   allRanksCoordinates: string [] = ['1', '2', '3', '4', '5', '6', '7', '8'];
 
-  imagesReferences: string [][];
+  /**
+   * 1st dimension => rank : always from 1 to 8
+   * 2nd dimension => file : always from A to H
+   */
+  piecesValues: string [][];
 
   constructor(private renderer: Renderer2, private chessService: Loloof64ChessLogicService) { }
 
   ngOnInit() {
-    this.position = this.chessService.getCurrentPosition();
+    this.chessService.newGame();
     this.updateRenderSize();
-    this.imagesReferences = this.imagesFromPosition();
+    this.piecesValues = this.piecesValuesFromPosition();
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    const positionChange = changes.position;
-    if (positionChange !== undefined) {
-      this.position = changes.position.currentValue;
-      this.imagesReferences = this.imagesFromPosition();
-    }
-
     const sizeChange = changes.size;
     if (sizeChange !== undefined) {
       this.updateRenderSize();
@@ -49,10 +46,6 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
     this.renderer.setStyle(this.root.nativeElement, 'height', this.size + 'px');
   }
 
-  cellColorClass(file: number, rank: number): string {
-    return (file + rank) % 2 === 0 ? 'white-cell' : 'black-cell';
-  }
-
   fileCoordinate(file: number): string {
     return this.allFilesCoordinates[this.reversed ? 7 - file : file];
   }
@@ -62,7 +55,7 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
   }
 
   imageDefinedFor(file: number, rank: number): boolean {
-    return this.imagesReferences !== undefined && this.imagesReferences[rank][file] !== undefined;
+    return this.piecesValues !== undefined && this.piecesValues[rank][file] !== undefined;
   }
 
   pieceSize(): number {
@@ -74,20 +67,14 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
   }
 
   turnClass(): string {
-    const blackToPlay = this.position.split(' ')[1].charAt(0) === 'b';
+    const currentPosition = this.chessService.getCurrentPosition();
+    const blackToPlay = currentPosition.split(' ')[1].charAt(0) === 'b';
     return blackToPlay ? 'turn-black' : 'turn-white';
   }
 
-  private imagesFromPosition(): string[][] {
-    let boardValues = this.position.split(' ')[0].split('/').reverse();
-
-    if (this.reversed) {
-      boardValues = boardValues.reverse();
-      for (let rank = 0; rank < 8; rank++) {
-        // reverse the string
-        boardValues[rank] = boardValues[rank].split('').reverse().join('');
-      }
-    }
+  private piecesValuesFromPosition(): string[][] {
+    const currentPosition = this.chessService.getCurrentPosition();
+    let boardValues = currentPosition.split(' ')[0].split('/').reverse();
 
     let result = [];
 
@@ -98,8 +85,6 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
       let charPosition = 0;
 
       while (file < 8) {
-        let pieceRef: string;
-
         const currentValue = boardValues[rank][charPosition];
         const valueAsDigit = currentValue.charCodeAt(0) - '0'.charCodeAt(0);
         const isCorrectDigitValue = valueAsDigit >= 0 && valueAsDigit <= 9;
@@ -111,22 +96,7 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
             file++;
           }
         } else {
-          switch (currentValue) {
-            case 'P': pieceRef = 'Chess_plt45.svg'; break;
-            case 'N': pieceRef = 'Chess_nlt45.svg'; break;
-            case 'B': pieceRef = 'Chess_blt45.svg'; break;
-            case 'R': pieceRef = 'Chess_rlt45.svg'; break;
-            case 'Q': pieceRef = 'Chess_qlt45.svg'; break;
-            case 'K': pieceRef = 'Chess_klt45.svg'; break;
-
-            case 'p': pieceRef = 'Chess_pdt45.svg'; break;
-            case 'n': pieceRef = 'Chess_ndt45.svg'; break;
-            case 'b': pieceRef = 'Chess_bdt45.svg'; break;
-            case 'r': pieceRef = 'Chess_rdt45.svg'; break;
-            case 'q': pieceRef = 'Chess_qdt45.svg'; break;
-            case 'k': pieceRef = 'Chess_kdt45.svg'; break;
-          }
-          line.push(pieceRef);
+          line.push(currentValue);
           file++;
         }
 
@@ -139,11 +109,23 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
     return result;
   }
 
-  startDnd(row: number, col: number) {
+  getFile(col: number) {
+    return this.reversed ? 7 - col : col;
+  }
+
+  getRank(row: number) {
+    return this.reversed ? row : 7 - row;
+  }
+
+  getPieceValue(col: number, row: number) {
+    return this.piecesValues[this.getRank(row)][this.getFile(col)];
+  }
+
+  startDnd(col: number, row: number) {
     
   }
 
-  endDnd(row: number, col: number) {
+  endDnd(col: number, row: number) {
 
   }
 

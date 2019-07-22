@@ -17,7 +17,6 @@ export class HomePage implements OnInit, DoCheck {
   }
 
   ngDoCheck() {
-    console.log('Do check !!!');
     this.adjustBoardSize();
   }
 
