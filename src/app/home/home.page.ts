@@ -8,14 +8,14 @@ import { Platform } from '@ionic/angular';
 })
 export class HomePage implements OnInit {
 
-  lowestScreenDimension: number;
+  boardSize: number;
 
   constructor(private platform: Platform) {}
 
   ngOnInit() {
-    this.lowestScreenDimension = this.platform.width() < this.platform.height() ?
+    this.boardSize = this.platform.width() < this.platform.height() ?
       this.platform.width() :
-      this.platform.height();
+      this.platform.height() - 56;
   }
 
 }
