@@ -24,8 +24,7 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
   constructor(private renderer: Renderer2) { }
 
   ngOnInit() {
-    this.root.nativeElement.style.width = this.size + 'px';
-    this.root.nativeElement.style.height = this.size + 'px';
+    this.updateRenderSize();
     this.imagesReferences = this.imagesFromPosition();
   }
 
@@ -35,6 +34,16 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
       this.position = changes.position.currentValue;
       this.imagesReferences = this.imagesFromPosition();
     }
+
+    const sizeChange = changes.size;
+    if (sizeChange !== undefined) {
+      this.updateRenderSize();
+    }
+  }
+
+  private updateRenderSize() {
+    this.renderer.setStyle(this.root.nativeElement, 'width', this.size + 'px');
+    this.renderer.setStyle(this.root.nativeElement, 'height', this.size + 'px');
   }
 
   cellColorClass(file: number, rank: number): string {

@@ -1,4 +1,4 @@
-import { Component, OnInit} from '@angular/core';
+import { Component, OnInit, DoCheck } from '@angular/core';
 import { Platform } from '@ionic/angular';
 
 @Component({
@@ -6,14 +6,23 @@ import { Platform } from '@ionic/angular';
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
-export class HomePage implements OnInit {
+export class HomePage implements OnInit, DoCheck {
 
   boardSize: number;
 
   constructor(private platform: Platform) {}
 
   ngOnInit() {
-    this.boardSize = this.platform.width() < this.platform.height() ?
+    this.adjustBoardSize();
+  }
+
+  ngDoCheck() {
+    console.log('Do check !!!');
+    this.adjustBoardSize();
+  }
+
+  private adjustBoardSize() {
+    this.boardSize = this.platform.isPortrait() ?
       this.platform.width() :
       this.platform.height() - 56;
   }
