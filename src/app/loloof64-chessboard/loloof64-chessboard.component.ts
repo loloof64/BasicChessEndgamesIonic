@@ -2,11 +2,13 @@ import {
   Component, OnInit, Renderer2, ElementRef, Input, ViewChild,
   OnChanges, SimpleChanges,
 } from '@angular/core';
+import { ChessCell, Loloof64ChessLogicService } from '../services/loloof64-chess-logic.service';
 
 @Component({
   selector: 'loloof64-chessboard',
   templateUrl: './loloof64-chessboard.component.html',
   styleUrls: ['./loloof64-chessboard.component.scss'],
+  providers: [Loloof64ChessLogicService],
 })
 export class Loloof64ChessboardComponent implements OnInit, OnChanges {
 
@@ -21,9 +23,10 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
 
   imagesReferences: string [][];
 
-  constructor(private renderer: Renderer2) { }
+  constructor(private renderer: Renderer2, private chessService: Loloof64ChessLogicService) { }
 
   ngOnInit() {
+    this.position = this.chessService.getCurrentPosition();
     this.updateRenderSize();
     this.imagesReferences = this.imagesFromPosition();
   }
