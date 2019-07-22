@@ -2,7 +2,7 @@ import {
   Component, OnInit, Renderer2, ElementRef, Input, ViewChild,
   OnChanges, SimpleChanges,
 } from '@angular/core';
-import { Loloof64ChessLogicService } from '../../services/loloof64-chess-logic.service';
+import { Loloof64ChessLogicService, ChessCell } from '../../services/loloof64-chess-logic.service';
 
 @Component({
   selector: 'loloof64-chessboard',
@@ -16,6 +16,8 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
   @Input() reversed = false;
 
   @ViewChild('root') root: ElementRef;
+
+  private dndHighlightedCell: ChessCell = null;
 
   allFilesCoordinates: string [] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
   allRanksCoordinates: string [] = ['1', '2', '3', '4', '5', '6', '7', '8'];
@@ -121,12 +123,26 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
     return this.piecesValues[this.getRank(row)][this.getFile(col)];
   }
 
-  startDnd(col: number, row: number) {
-    
+  isDndHighlighted(col: number, row: number) {
+    if (this.dndHighlightedCell === null) { return false; }
+    if (this.dndHighlightedCell.file !== this.getFile(col)) { return false; }
+    if (this.dndHighlightedCell.rank !== this.getRank(row)) { return false; }
+    return true;
   }
 
-  endDnd(col: number, row: number) {
+  defaultDragEnter(event: Event) {
+    event.preventDefault();
+  }
 
+  onDragStart(col: number, row: number) {
+    this.dndHighlightedCell = {
+      file: this.getFile(col),
+      rank: this.getRank(row)
+    };
+  }
+
+  onDragEnd(col: number, row: number) {
+    this.dndHighlightedCell = null;
   }
 
 }

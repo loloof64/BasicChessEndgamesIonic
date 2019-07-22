@@ -60,6 +60,10 @@ import './zone-flags.ts';
 
 import 'zone.js/dist/zone';  // Included with Angular CLI.
 
+import {polyfill} from 'mobile-drag-drop';
+
+polyfill();
+
 
 /***************************************************************************************************
  * APPLICATION IMPORTS

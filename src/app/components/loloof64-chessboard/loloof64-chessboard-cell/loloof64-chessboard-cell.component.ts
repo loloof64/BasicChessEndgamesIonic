@@ -10,12 +10,17 @@ export class Loloof64ChessboardCellComponent implements OnInit {
   @Input() file: number;
   @Input() rank: number;
   @Input() value: string;
+  @Input() dndHighlight: boolean;
 
   constructor() { }
 
   ngOnInit() {}
 
   getCellClass() {
+    if (this.dndHighlight) {
+      return 'dnd-start-cell';
+    }
+
     const whiteCell = (this.file + this.rank) % 2 !== 0;
     return whiteCell ? 'white-cell' : 'black-cell';
   }
@@ -39,8 +44,12 @@ export class Loloof64ChessboardCellComponent implements OnInit {
     }
   }
 
-  hasPiece(): boolean {
+  mustShowPiece(): boolean {
     return this.getPieceImage() !== undefined;
+  }
+
+  getPiecePath(): string {
+    return `/assets/vectors/${this.getPieceImage()}`;
   }
 
 }

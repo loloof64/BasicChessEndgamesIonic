@@ -1,41 +1,48 @@
 <div class="board-root" #root>
   <ng-container>
-    <div class="empty-zone"></div>
+    <div class="empty-zone" (dragenter)="defaultDragEnter($event)"></div>
     <div 
       class="coord"
       *ngFor="let col of [0,1,2,3,4,5,6,7]"
       [style.font-size.px]="coordinateFontSize()"
+      (dragenter)="defaultDragEnter($event)"
     >{{fileCoordinate(col)}}</div>
-    <div class="empty-zone"></div>
+    <div class="empty-zone" (dragenter)="defaultDragEnter($event)"></div>
   </ng-container>
 
   <ng-container *ngFor="let row of [0,1,2,3,4,5,6,7]">
     <div 
       class="coord"
       [style.font-size.px]="coordinateFontSize()"
+      (dragenter)="defaultDragEnter($event)"
     >{{rankCoordinate(row)}}</div>
     <loloof64-chessboard-cell 
       *ngFor="let col of [0,1,2,3,4,5,6,7]" 
-      (dragstart)="startDnd(col, row)"
       [file]="getFile(col)"
       [rank]="getRank(row)"
       [value]="getPieceValue(col, row)"
+      [dndHighlight]="isDndHighlighted(col, row)"
+      (dragenter)="defaultDragEnter($event)"
+      (dragstart)="onDragStart(col, row)"
+      (dragend)="onDragEnd(col, row)"
     >
     </loloof64-chessboard-cell>
     <div 
       class="coord"
       [style.font-size.px]="coordinateFontSize()"
+      (dragenter)="defaultDragEnter($event)"
     >{{rankCoordinate(row)}}</div>
   </ng-container>
 
   <ng-container>
-      <div class="empty-zone"></div>
+      <div class="empty-zone" (dragenter)="defaultDragEnter($event)"></div>
       <div 
         class="coord" 
         *ngFor="let col of [0,1,2,3,4,5,6,7]"
         [style.font-size.px]="coordinateFontSize()"
+        (dragenter)="defaultDragEnter($event)"
       >{{fileCoordinate(col)}}</div>
-      <div class="empty-zone">
+      <div class="empty-zone" (dragenter)="defaultDragEnter($event)">
         <div [class]="turnClass()"></div>
       </div>
     </ng-container>
