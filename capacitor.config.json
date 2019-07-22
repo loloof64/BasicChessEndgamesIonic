@@ -3,5 +3,10 @@
   "appName": "Basic Chess Endgames",
   "bundledWebRuntime": false,
   "npmClient": "npm",
-  "webDir": "www"
+  "webDir": "www",
+  "plugins": {
+    "SplashScreen": {
+      "showSpinner": true
+    }
+  }
 }
