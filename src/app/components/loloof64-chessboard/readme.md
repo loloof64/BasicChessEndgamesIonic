@@ -19,12 +19,18 @@ A dynamic chess board
 $ npm install mobile-drag-drop
 ```
 
-Inside polyfill.ts, add, at the end of browser polyfills section :
+Inside polyfill.ts (at least in Ionic projects), add, at the beginning of browser polyfills section :
 
 ```
 import {polyfill} from 'mobile-drag-drop';
 
-polyfill();
+polyfill({
+    dragImageSetup: (elt: HTMLElement) => {
+        const copy = (elt.cloneNode()) as HTMLElement;
+        copy.style.opacity = '1.0';
+        return copy;
+    }
+});
 ```
 
 ## Credits

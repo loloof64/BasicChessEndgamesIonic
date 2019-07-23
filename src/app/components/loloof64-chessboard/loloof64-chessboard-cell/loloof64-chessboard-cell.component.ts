@@ -1,20 +1,33 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Renderer2, OnChanges, SimpleChanges, ViewChild, ElementRef } from '@angular/core';
 
 @Component({
   selector: 'loloof64-chessboard-cell',
   templateUrl: './loloof64-chessboard-cell.component.html',
   styleUrls: ['./loloof64-chessboard-cell.component.scss'],
 })
-export class Loloof64ChessboardCellComponent implements OnInit {
+export class Loloof64ChessboardCellComponent implements OnInit, OnChanges {
 
   @Input() file: number;
   @Input() rank: number;
   @Input() value: string;
   @Input() dndHighlight: boolean;
 
-  constructor() { }
+  @ViewChild('pieceImg') pieceImg: ElementRef;
+
+  constructor(private renderer: Renderer2) { }
 
   ngOnInit() {}
+
+  ngOnChanges(changes: SimpleChanges) {
+    const dndHighlightChanges = changes.dndHighlight;
+    if (dndHighlightChanges !== undefined && this.pieceImg !== undefined) {
+      if (dndHighlightChanges.currentValue) {
+        this.renderer.setStyle(this.pieceImg.nativeElement, 'opacity', '0.0');
+      } else {
+        this.renderer.setStyle(this.pieceImg.nativeElement, 'opacity', '1.0');
+      }
+    }
+  }
 
   getCellClass() {
     if (this.dndHighlight) {
