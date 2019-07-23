@@ -1,4 +1,4 @@
-<div [class]="getCellClass()">
+<div [class]="getCellClass()" #root>
   <img 
       *ngIf="mustShowPiece()" 
       [src]="getPiecePath()"
