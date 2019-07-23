@@ -18,6 +18,7 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
   @ViewChild('root') root: ElementRef;
 
   private dndHighlightedCell: ChessCell = null;
+  private dndHoveringCell: ChessCell = null;
 
   allFilesCoordinates: string [] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
   allRanksCoordinates: string [] = ['1', '2', '3', '4', '5', '6', '7', '8'];
@@ -130,19 +131,61 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
     return true;
   }
 
-  defaultDragEnter(event: Event) {
-    event.preventDefault();
+  isDndHoveringCell(col: number, row: number) {
+    if (this.dndHoveringCell === null) { return false; }
+    if (this.dndHoveringCell.file !== this.getFile(col)) { return false; }
+    if (this.dndHoveringCell.rank !== this.getRank(row)) { return false; }
+    return true;
   }
 
-  onDragStart(col: number, row: number) {
+  onDragStart(event: DragEvent, col: number, row: number) {
+    ////////////////////////////////
+    console.log("Drag start", col, row);
+    /////////////////////////////////
+    const pieceValue = this.piecesValues[this.getRank(row)][this.getFile(col)];
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData('text', pieceValue);
     this.dndHighlightedCell = {
       file: this.getFile(col),
       rank: this.getRank(row)
     };
+    event.stopPropagation();
   }
 
-  onDragEnd(col: number, row: number) {
+  onDragEnd(event: DragEvent) {
+    const cellSize = this.size / 9.0;
+    const col = Math.floor((event.clientX - cellSize * 0.5) / cellSize);
+    const row = Math.floor((event.clientY - cellSize * 0.5) / cellSize);
+    ////////////////////////////////
+    console.log("Drag end", col, row);
+    /////////////////////////////////
     this.dndHighlightedCell = null;
+    this.dndHoveringCell = null;
+    event.stopPropagation();
+  }
+
+  onDragEnter(event: DragEvent, col: number, row: number) {
+    event.preventDefault();
+  }
+
+  onDragOver(event: DragEvent, col: number, row: number) {
+    ////////////////////////////////
+    console.log("Drag over", col, row);
+    /////////////////////////////////
+    this.dndHoveringCell = {
+      file: this.getFile(col),
+      rank: this.getRank(row)
+    };
+    event.stopPropagation();
+  }
+
+  onDragLeave(event: DragEvent, col: number, row: number) {
+    ////////////////////////////////
+    console.log("Drag leave", col, row);
+    /////////////////////////////////
+    event.preventDefault();
+    this.dndHoveringCell = null;
+    event.stopPropagation();
   }
 
 }

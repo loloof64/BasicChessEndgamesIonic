@@ -11,6 +11,7 @@ export class Loloof64ChessboardCellComponent implements AfterViewChecked, OnChan
   @Input() rank: number;
   @Input() value: string;
   @Input() dndHighlight: boolean;
+  @Input() dndHovering: boolean;
 
   @ViewChild('root') root: ElementRef;
   @ViewChild('pieceImg') pieceImg: ElementRef;
@@ -37,6 +38,10 @@ export class Loloof64ChessboardCellComponent implements AfterViewChecked, OnChan
   }
 
   getCellClass() {
+    if (this.dndHovering) {
+      return 'dnd-end-cell';
+    }
+
     if (this.dndHighlight) {
       return 'dnd-start-cell';
     }
