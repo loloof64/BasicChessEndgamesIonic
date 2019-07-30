@@ -17,6 +17,7 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
 
   @ViewChild('root') root: ElementRef;
   @ViewChild('click_zone') clickZone: ElementRef;
+  @ViewChild('dndPiece') dndPiece: ElementRef;
 
   private dndHighlightedCell: ChessCell = null;
   private dndHoveringCell: ChessCell = null;
@@ -164,6 +165,11 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
         file: this.getFile(boardRawCoordinates.col),
         rank: this.getRank(boardRawCoordinates.row)
       };
+
+      this.dndHoveringCell = {
+        file: this.getFile(boardRawCoordinates.col),
+        rank: this.getRank(boardRawCoordinates.row)
+      };
     }
     
   }
@@ -192,6 +198,43 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
       file: this.getFile(col),
       rank: this.getRank(row)
     };
+
+    if (this.dndPiece !== null) {
+      const left = cellSize * (0.5 + col);
+      const top = cellSize * (0.5 + row);
+
+      this.renderer.setStyle(this.dndPiece.nativeElement, 'left', left + 'px');
+      this.renderer.setStyle(this.dndPiece.nativeElement, 'top', top + 'px');
+      this.renderer.setStyle(this.dndPiece.nativeElement, 'width', cellSize + 'px');
+      this.renderer.setStyle(this.dndPiece.nativeElement, 'height', cellSize + 'px');
+    }
+  }
+
+  dndHasStarted() {
+    return ![null, undefined].includes(this.dndHighlightedCell);
+  }
+
+  dndPieceImageSrc() {
+    const dndPieceValue = this.piecesValues[this.dndHighlightedCell.rank][this.dndHighlightedCell.file];
+    let rawImageName;
+    switch (dndPieceValue) {
+      case 'P': rawImageName = 'Chess_plt45.svg'; break;
+      case 'N': rawImageName = 'Chess_nlt45.svg'; break;
+      case 'B': rawImageName = 'Chess_blt45.svg'; break;
+      case 'R': rawImageName = 'Chess_rlt45.svg'; break;
+      case 'Q': rawImageName = 'Chess_qlt45.svg'; break;
+      case 'K': rawImageName = 'Chess_klt45.svg'; break;
+
+      case 'p': rawImageName = 'Chess_pdt45.svg'; break;
+      case 'n': rawImageName = 'Chess_ndt45.svg'; break;
+      case 'b': rawImageName = 'Chess_bdt45.svg'; break;
+      case 'r': rawImageName = 'Chess_rdt45.svg'; break;
+      case 'q': rawImageName = 'Chess_qdt45.svg'; break;
+      case 'k': rawImageName = 'Chess_kdt45.svg'; break;
+      default: return undefined;
+    }
+
+    return `/assets/vectors/${rawImageName}`;
   }
 
   private touchEventToBoardRawCoordinate = (event: any) => {
