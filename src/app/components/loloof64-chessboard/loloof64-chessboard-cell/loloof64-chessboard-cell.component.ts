@@ -50,31 +50,4 @@ export class Loloof64ChessboardCellComponent implements AfterViewChecked, OnChan
     return whiteCell ? 'white-cell' : 'black-cell';
   }
 
-  getPieceImage(): string {
-    switch (this.value) {
-      case 'P': return 'Chess_plt45.svg'; break;
-      case 'N': return 'Chess_nlt45.svg'; break;
-      case 'B': return 'Chess_blt45.svg'; break;
-      case 'R': return 'Chess_rlt45.svg'; break;
-      case 'Q': return 'Chess_qlt45.svg'; break;
-      case 'K': return 'Chess_klt45.svg'; break;
-
-      case 'p': return 'Chess_pdt45.svg'; break;
-      case 'n': return 'Chess_ndt45.svg'; break;
-      case 'b': return 'Chess_bdt45.svg'; break;
-      case 'r': return 'Chess_rdt45.svg'; break;
-      case 'q': return 'Chess_qdt45.svg'; break;
-      case 'k': return 'Chess_kdt45.svg'; break;
-      default: return undefined;
-    }
-  }
-
-  mustShowPiece(): boolean {
-    return this.getPieceImage() !== undefined;
-  }
-
-  getPiecePath(): string {
-    return `/assets/vectors/${this.getPieceImage()}`;
-  }
-
 }

@@ -61,6 +61,20 @@
     class="dnd-piece"
     #dndPiece
   />
+  <ng-container *ngFor="let row of [0,1,2,3,4,5,6,7]">
+      <ng-container *ngFor="let col of [0,1,2,3,4,5,6,7]">
+        <img 
+          *ngIf="mustShowPiece(row, col)" 
+          [src]="getPiecePath(row, col)"
+          class="cellImage"
+          [width]="getCellImagesSize()"
+          [height]="getCellImagesSize()"
+          [style.left.px]="getCellImageLeft(col)"
+          [style.top.px]="getCellImageTop(row)"
+        />
+    </ng-container>
+  </ng-container>
+  
   <div #click_zone class="click-zone"
     (touchstart)="dragStart($event)"
     (touchend)="dragEnd($event)"

@@ -48,7 +48,7 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
     }
   }
 
-  private updateRenderSize() {
+  private updateRenderSize = () => {
     this.renderer.setStyle(this.root.nativeElement, 'width', this.size + 'px');
     this.renderer.setStyle(this.root.nativeElement, 'height', this.size + 'px');
 
@@ -56,33 +56,33 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
     this.renderer.setStyle(this.clickZone.nativeElement, 'height', this.size + 'px');
   }
 
-  fileCoordinate(file: number): string {
+  fileCoordinate = (file: number): string => {
     return this.allFilesCoordinates[this.reversed ? 7 - file : file];
   }
 
-  rankCoordinate(rank: number): string {
+  rankCoordinate = (rank: number): string => {
     return this.allRanksCoordinates[this.reversed ? rank : 7 - rank];
   }
 
-  imageDefinedFor(file: number, rank: number): boolean {
+  imageDefinedFor = (file: number, rank: number): boolean => {
     return this.piecesValues !== undefined && this.piecesValues[rank][file] !== undefined;
   }
 
-  pieceSize(): number {
+  pieceSize = (): number => {
     return this.size * 0.1;
   }
 
-  coordinateFontSize(): number {
+  coordinateFontSize = (): number => {
     return this.size * 0.04;
   }
 
-  turnClass(): string {
+  turnClass = (): string => {
     const currentPosition = this.chessService.getCurrentPosition();
     const blackToPlay = currentPosition.split(' ')[1].charAt(0) === 'b';
     return blackToPlay ? 'turn-black' : 'turn-white';
   }
 
-  private piecesValuesFromPosition(): string[][] {
+  private piecesValuesFromPosition = (): string[][] => {
     const currentPosition = this.chessService.getCurrentPosition();
     let boardValues = currentPosition.split(' ')[0].split('/').reverse();
 
@@ -119,33 +119,33 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
     return result;
   }
 
-  getFile(col: number) {
+  getFile = (col: number) => {
     return this.reversed ? 7 - col : col;
   }
 
-  getRank(row: number) {
+  getRank = (row: number) => {
     return this.reversed ? row : 7 - row;
   }
 
-  getPieceValue(col: number, row: number) {
+  getPieceValue = (col: number, row: number) => {
     return this.piecesValues[this.getRank(row)][this.getFile(col)];
   }
 
-  isDndHighlighted(col: number, row: number) {
+  isDndHighlighted = (col: number, row: number) => {
     if (this.dndHighlightedCell === null) { return false; }
     if (this.dndHighlightedCell.file !== this.getFile(col)) { return false; }
     if (this.dndHighlightedCell.rank !== this.getRank(row)) { return false; }
     return true;
   }
 
-  isDndHoveringCell(col: number, row: number) {
+  isDndHoveringCell = (col: number, row: number) => {
     if (this.dndHoveringCell === null) { return false; }
     if (this.dndHoveringCell.file !== this.getFile(col)) { return false; }
     if (this.dndHoveringCell.rank !== this.getRank(row)) { return false; }
     return true;
   }
 
-  dragStart(event: any) {
+  dragStart = (event: any) => {
     event.preventDefault();
     event.stopPropagation();
 
@@ -176,7 +176,7 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
     
   }
 
-  dragEnd(event: any) {
+  dragEnd = (event: any) => {
     event.preventDefault();
     event.stopPropagation();
 
@@ -185,7 +185,7 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
   }
 
 
-  dragMove(event: any) {
+  dragMove = (event: any) => {
     event.preventDefault();
     event.stopPropagation();
 
@@ -248,14 +248,67 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
     }
   }
 
-  dndHasStarted() {
+  dndHasStarted = () => {
     return ![null, undefined].includes(this.dndHighlightedCell);
   }
 
-  dndPieceImageSrc() {
+  dndPieceImageSrc = () => {
     const dndPieceValue = this.piecesValues[this.dndHighlightedCell.rank][this.dndHighlightedCell.file];
+    return this.getPieceRawPath(dndPieceValue);
+  }
+
+  private touchEventToBoardRawCoordinate = (event: any) => {
+    const cellSize = (this.size / 9.0);
+    const halfCellSize = cellSize / 2.0;
+
+    const eventTouch = event.touches[0];
+
+    const clickBounds = this.clickZone.nativeElement.getBoundingClientRect();
+
+    const col = Math.floor((eventTouch.clientX - clickBounds.left - halfCellSize) / cellSize);
+    const row = Math.floor((eventTouch.clientY - clickBounds.top - halfCellSize) / cellSize);
+
+    return {col, row};
+  }
+
+  mustShowPiece = (row: number, col: number): boolean => {
+    const pieceValue = this.piecesValues[this.getRank(row)][this.getFile(col)];
+    const hasNoPiece = pieceValue === undefined;
+    if (hasNoPiece) {
+      return false;
+    }
+
+    const dndStarted = this.dndHighlightedCell !== null;
+    if (dndStarted) {
+      return this.getRank(row) !== this.dndHighlightedCell.rank ||
+        this.getFile(col) !== this.dndHighlightedCell.file;
+    } else {
+      return true;
+    }
+  }
+
+  getCellImagesSize = () => {
+    return this.size / 9.0;
+  }
+
+  getCellImageLeft = (col: number) => {
+    const cellSize = this.size / 9.0;
+    return cellSize * (0.5 + col);
+  }
+
+  getCellImageTop = (row: number) => {
+    const cellSize = this.size / 9.0;
+    return cellSize * (0.5 + row);
+  }
+
+  getPiecePath = (row: number, col: number) => {
+    const pieceValue = this.piecesValues[this.getRank(row)][this.getFile(col)];
+    return this.getPieceRawPath(pieceValue);
+  }
+
+  private getPieceRawPath = (value: string): string => {
     let rawImageName;
-    switch (dndPieceValue) {
+    switch (value) {
       case 'P': rawImageName = 'Chess_plt45.svg'; break;
       case 'N': rawImageName = 'Chess_nlt45.svg'; break;
       case 'B': rawImageName = 'Chess_blt45.svg'; break;
@@ -274,20 +327,5 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
 
     return `/assets/vectors/${rawImageName}`;
   }
-
-  private touchEventToBoardRawCoordinate = (event: any) => {
-    const cellSize = (this.size / 9.0);
-    const halfCellSize = cellSize / 2.0;
-
-    const eventTouch = event.touches[0];
-
-    const clickBounds = this.clickZone.nativeElement.getBoundingClientRect();
-
-    const col = Math.floor((eventTouch.clientX - clickBounds.left - halfCellSize) / cellSize);
-    const row = Math.floor((eventTouch.clientY - clickBounds.top - halfCellSize) / cellSize);
-
-    return {col, row};
-}
-
 
 }
