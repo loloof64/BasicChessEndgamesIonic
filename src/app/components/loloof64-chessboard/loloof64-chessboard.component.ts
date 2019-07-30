@@ -16,6 +16,7 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
   @Input() reversed = false;
 
   @ViewChild('root') root: ElementRef;
+  @ViewChild('click_zone') clickZone: ElementRef;
 
   private dndHighlightedCell: ChessCell = null;
   private dndHoveringCell: ChessCell = null;
@@ -47,6 +48,9 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
   private updateRenderSize() {
     this.renderer.setStyle(this.root.nativeElement, 'width', this.size + 'px');
     this.renderer.setStyle(this.root.nativeElement, 'height', this.size + 'px');
+
+    this.renderer.setStyle(this.clickZone.nativeElement, 'width', this.size + 'px');
+    this.renderer.setStyle(this.clickZone.nativeElement, 'height', this.size + 'px');
   }
 
   fileCoordinate(file: number): string {
@@ -138,9 +142,10 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
     return true;
   }
 
-  onDragStart(event: DragEvent, col: number, row: number) {
+  dragStart(event: any) {
+    const touch = event.touches[0];
     ////////////////////////////////
-    console.log("Drag start", col, row);
+    console.log("Drag start", touch.clientX, touch.clientY);
     /////////////////////////////////
     const pieceValue = this.piecesValues[this.getRank(row)][this.getFile(col)];
     event.dataTransfer.effectAllowed = 'move';
@@ -152,39 +157,21 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
     event.stopPropagation();
   }
 
-  onDragEnd(event: DragEvent) {
+  dragEnd(event: any) {
     const cellSize = this.size / 9.0;
     const col = Math.floor((event.clientX - cellSize * 0.5) / cellSize);
     const row = Math.floor((event.clientY - cellSize * 0.5) / cellSize);
-    ////////////////////////////////
-    console.log("Drag end", col, row);
-    /////////////////////////////////
     this.dndHighlightedCell = null;
     this.dndHoveringCell = null;
     event.stopPropagation();
   }
 
-  onDragEnter(event: DragEvent, col: number, row: number) {
-    event.preventDefault();
-  }
 
-  onDragOver(event: DragEvent, col: number, row: number) {
-    ////////////////////////////////
-    console.log("Drag over", col, row);
-    /////////////////////////////////
+  dragMove(event: any) {
     this.dndHoveringCell = {
       file: this.getFile(col),
       rank: this.getRank(row)
     };
-    event.stopPropagation();
-  }
-
-  onDragLeave(event: DragEvent, col: number, row: number) {
-    ////////////////////////////////
-    console.log("Drag leave", col, row);
-    /////////////////////////////////
-    event.preventDefault();
-    this.dndHoveringCell = null;
     event.stopPropagation();
   }
 

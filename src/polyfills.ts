@@ -18,16 +18,6 @@
  * BROWSER POLYFILLS
  */
 
-import {polyfill} from 'mobile-drag-drop';
-
-polyfill({
-    dragImageSetup: (elt: HTMLElement) => {
-        const copy = (elt.cloneNode()) as HTMLElement;
-        copy.style.opacity = '1.0';
-        return copy;
-    }
-});
-
 /** IE10 and IE11 requires the following for NgClass support on SVG elements */
 // import 'classlist.js';  // Run `npm install --save classlist.js`.
 

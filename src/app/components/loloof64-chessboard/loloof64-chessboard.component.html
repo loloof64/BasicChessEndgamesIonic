@@ -1,50 +1,51 @@
-<div class="board-root" #root>
-  <ng-container>
-    <div class="empty-zone"></div>
-    <div 
-      class="coord"
-      *ngFor="let col of [0,1,2,3,4,5,6,7]"
-      [style.font-size.px]="coordinateFontSize()"
-    >{{fileCoordinate(col)}}</div>
-    <div class="empty-zone"></div>
-  </ng-container>
 
-  <ng-container *ngFor="let row of [0,1,2,3,4,5,6,7]">
-    <div 
-      class="coord"
-      [style.font-size.px]="coordinateFontSize()"
-    >{{rankCoordinate(row)}}</div>
-    <loloof64-chessboard-cell 
-      *ngFor="let col of [0,1,2,3,4,5,6,7]" 
-      [file]="getFile(col)"
-      [rank]="getRank(row)"
-      [value]="getPieceValue(col, row)"
-      [dndHighlight]="isDndHighlighted(col, row)"
-      [dndHovering]="isDndHoveringCell(col, row)"
-      (dragstart)="onDragStart($event, col, row)"
-      (dragend)="onDragEnd($event)"
-      (dragenter)="onDragEnter($event, col, row)"
-      (dragover)="onDragOver($event, col, row)"
-      (dragleave)="onDragLeave($event, col, row)"
-    >
-    </loloof64-chessboard-cell>
-    <div 
-      class="coord"
-      [style.font-size.px]="coordinateFontSize()"
-     
-    >{{rankCoordinate(row)}}</div>
-  </ng-container>
-
-  <ng-container>
-      <div class="empty-zone"></div>
-      <div 
-        class="coord" 
-        *ngFor="let col of [0,1,2,3,4,5,6,7]"
-        [style.font-size.px]="coordinateFontSize()"
-       
-      >{{fileCoordinate(col)}}</div>
-      <div class="empty-zone">
-        <div [class]="turnClass()"></div>
-      </div>
-    </ng-container>
-</div>
+<ng-container>
+    <div class="board-root" #root>
+      <ng-container>
+        <div class="empty-zone"></div>
+        <div 
+          class="coord"
+          *ngFor="let col of [0,1,2,3,4,5,6,7]"
+          [style.font-size.px]="coordinateFontSize()"
+        >{{fileCoordinate(col)}}</div>
+        <div class="empty-zone"></div>
+      </ng-container>
+    
+      <ng-container *ngFor="let row of [0,1,2,3,4,5,6,7]">
+        <div 
+          class="coord"
+          [style.font-size.px]="coordinateFontSize()"
+        >{{rankCoordinate(row)}}</div>
+        <loloof64-chessboard-cell 
+          *ngFor="let col of [0,1,2,3,4,5,6,7]" 
+          [file]="getFile(col)"
+          [rank]="getRank(row)"
+          [value]="getPieceValue(col, row)"
+        >
+        </loloof64-chessboard-cell>
+        <div 
+          class="coord"
+          [style.font-size.px]="coordinateFontSize()"
+          
+        >{{rankCoordinate(row)}}</div>
+      </ng-container>
+    
+      <ng-container>
+          <div class="empty-zone"></div>
+          <div 
+            class="coord" 
+            *ngFor="let col of [0,1,2,3,4,5,6,7]"
+            [style.font-size.px]="coordinateFontSize()"
+            
+          >{{fileCoordinate(col)}}</div>
+          <div class="empty-zone">
+            <div [class]="turnClass()"></div>
+          </div>
+        </ng-container>
+    </div>
+  <div #click_zone class="click-zone"
+    (touchstart)="dragStart($event)"
+    (touchend)="dragEnd($event)"
+    (touchmove)="dragMove($event)"
+  ></div>
+</ng-container>
