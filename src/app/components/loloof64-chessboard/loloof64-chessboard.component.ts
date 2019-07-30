@@ -187,6 +187,10 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
     event.preventDefault();
     event.stopPropagation();
 
+    if (!this.dndHasStarted()) {
+      return;
+    }
+
     const clickZoneLocation = this.clickZone.nativeElement.getBoundingClientRect();
     const touch = event.touches[0];
     const cellSize = this.size / 9.0;
