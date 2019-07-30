@@ -180,6 +180,11 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
     event.preventDefault();
     event.stopPropagation();
 
+    const legalMove = this.chessService.checkAndDoMove(this.dndHighlightedCell, this.dndHoveringCell);
+    if (legalMove) {
+      this.piecesValues = this.piecesValuesFromPosition();
+    }
+
     this.dndHighlightedCell = null;
     this.dndHoveringCell = null;
   }

@@ -44,14 +44,14 @@ export class Loloof64ChessLogicService {
   checkAndDoMove(start: ChessCell, end: ChessCell): boolean {
     const fromCell = this.cellToCoordsString(start);
     const toCell = this.cellToCoordsString(end);
-
-    const moveResult = this.game.move({ from: fromCell, to: toCell});
+    
+    const moveResult = this.game.move({ from: fromCell, to: toCell });
     return moveResult !== null;
   }
 
   private cellToCoordsString(cell: ChessCell): string {
-    const fileStr = ('A'.charCodeAt(0) + cell.file).toString();
-    const rankStr = ('1'.charCodeAt(0) + cell.rank).toString();
+    const fileStr = String.fromCharCode('a'.charCodeAt(0) + cell.file);
+    const rankStr = String.fromCharCode('1'.charCodeAt(0) + cell.rank);
 
     return `${fileStr}${rankStr}`;
   }
