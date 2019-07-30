@@ -13,10 +13,12 @@
 .dnd-start-cell {
     @include standard-cell();
     background-color: rgb(41, 187, 48);
+    z-index: -1;
 }
 
 .dnd-end-cell {
     @include standard-cell();
     background-color: rgb(87, 93, 201);
+    z-index: -1;
 }
   
