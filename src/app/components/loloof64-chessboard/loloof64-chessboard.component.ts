@@ -200,6 +200,14 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
     const col = Math.floor((touch.clientX - clickZoneLocation.left - cellSize * 0.5) / cellSize);
     const row = Math.floor((touch.clientY - clickZoneLocation.top - cellSize * 0.5) / cellSize);
 
+    const goingOutOfBoard = col < 0 || col > 7 || row < 0 || row > 7;
+    if (goingOutOfBoard) {
+      // cancelling the DnD
+      this.dndHighlightedCell = null;
+      this.dndHoveringCell = null;
+      return;
+    }
+
     this.dndHoveringCell = {
       file: this.getFile(col),
       rank: this.getRank(row)
