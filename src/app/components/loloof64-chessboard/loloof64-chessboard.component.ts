@@ -153,12 +153,12 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
 
 
     if (coordinatesInBoard) {
-      /*const pieceValue = this.piecesValues[this.getRank(boardRawCoordinates.row)][this.getFile(boardRawCoordinates.col)];
+      const pieceValue = this.piecesValues[this.getRank(boardRawCoordinates.row)][this.getFile(boardRawCoordinates.col)];
       const isLegalPieceValue = 'PNBRQKpnbrqk'.split('').includes(pieceValue);
 
       if ( ! isLegalPieceValue ) {
         return;
-      }*/
+      }
 
       this.dndHighlightedCell = {
         file: this.getFile(boardRawCoordinates.col),
