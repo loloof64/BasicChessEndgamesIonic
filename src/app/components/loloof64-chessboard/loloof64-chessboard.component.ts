@@ -18,6 +18,8 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
   @ViewChild('root') root: ElementRef;
   @ViewChild('click_zone') clickZone: ElementRef;
   @ViewChild('dndPiece') dndPiece: ElementRef;
+  @ViewChild('horizontalGuide') horizontalGuide: ElementRef;
+  @ViewChild('verticalGuide') verticalGuide: ElementRef;
 
   private dndHighlightedCell: ChessCell = null;
   private dndHoveringCell: ChessCell = null;
@@ -211,6 +213,30 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
       this.renderer.setStyle(this.dndPiece.nativeElement, 'top', top + 'px');
       this.renderer.setStyle(this.dndPiece.nativeElement, 'width', cellSize + 'px');
       this.renderer.setStyle(this.dndPiece.nativeElement, 'height', cellSize + 'px');
+    }
+
+    if (this.horizontalGuide != null) {
+      const left = cellSize * 0.5;
+      const top = cellSize * (row + 0.75);
+      const width = cellSize * 8;
+      const height = cellSize * 0.5;
+
+      this.renderer.setStyle(this.horizontalGuide.nativeElement, 'left', left + 'px');
+      this.renderer.setStyle(this.horizontalGuide.nativeElement, 'top', top + 'px');
+      this.renderer.setStyle(this.horizontalGuide.nativeElement, 'width', width + 'px');
+      this.renderer.setStyle(this.horizontalGuide.nativeElement, 'height', height + 'px');
+    }
+
+    if (this.verticalGuide != null) {
+      const left = cellSize * (col + 0.75);
+      const top = cellSize * 0.5;
+      const width = cellSize * 0.5;
+      const height = cellSize * 8;
+
+      this.renderer.setStyle(this.verticalGuide.nativeElement, 'left', left + 'px');
+      this.renderer.setStyle(this.verticalGuide.nativeElement, 'top', top + 'px');
+      this.renderer.setStyle(this.verticalGuide.nativeElement, 'width', width + 'px');
+      this.renderer.setStyle(this.verticalGuide.nativeElement, 'height', height + 'px');
     }
   }
 

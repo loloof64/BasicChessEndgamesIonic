@@ -43,6 +43,17 @@
           <div [class]="turnClass()"></div>
         </div>
       </ng-container>
+
+      <div
+        *ngIf="dndHasStarted()"
+        class="dndGuideLine"
+        #horizontalGuide
+      ></div>
+      <div
+        *ngIf="dndHasStarted()"
+        class="dndGuideLine"
+        #verticalGuide
+      ></div>
   </div>
   <img
     *ngIf="dndHasStarted()"
