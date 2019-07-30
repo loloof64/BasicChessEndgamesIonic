@@ -143,36 +143,70 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
   }
 
   dragStart(event: any) {
-    const touch = event.touches[0];
-    ////////////////////////////////
-    console.log("Drag start", touch.clientX, touch.clientY);
-    /////////////////////////////////
-    const pieceValue = this.piecesValues[this.getRank(row)][this.getFile(col)];
-    event.dataTransfer.effectAllowed = 'move';
-    event.dataTransfer.setData('text', pieceValue);
-    this.dndHighlightedCell = {
-      file: this.getFile(col),
-      rank: this.getRank(row)
-    };
+    event.preventDefault();
     event.stopPropagation();
+
+    const boardRawCoordinates = this.touchEventToBoardRawCoordinate(event);
+    const coordinatesInBoard = boardRawCoordinates !== undefined &&
+      boardRawCoordinates.col >= 0 && boardRawCoordinates.col <= 7 &&
+      boardRawCoordinates.row >= 0 && boardRawCoordinates.row <= 7;
+
+
+    if (coordinatesInBoard) {
+      /*const pieceValue = this.piecesValues[this.getRank(boardRawCoordinates.row)][this.getFile(boardRawCoordinates.col)];
+      const isLegalPieceValue = 'PNBRQKpnbrqk'.split('').includes(pieceValue);
+
+      if ( ! isLegalPieceValue ) {
+        return;
+      }*/
+
+      this.dndHighlightedCell = {
+        file: this.getFile(boardRawCoordinates.col),
+        rank: this.getRank(boardRawCoordinates.row)
+      };
+    }
+    
   }
 
   dragEnd(event: any) {
-    const cellSize = this.size / 9.0;
-    const col = Math.floor((event.clientX - cellSize * 0.5) / cellSize);
-    const row = Math.floor((event.clientY - cellSize * 0.5) / cellSize);
+    event.preventDefault();
+    event.stopPropagation();
+
     this.dndHighlightedCell = null;
     this.dndHoveringCell = null;
-    event.stopPropagation();
   }
 
 
   dragMove(event: any) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const clickZoneLocation = this.clickZone.nativeElement.getBoundingClientRect();
+    const touch = event.touches[0];
+    const cellSize = this.size / 9.0;
+
+    const col = Math.floor((touch.clientX - clickZoneLocation.left - cellSize * 0.5) / cellSize);
+    const row = Math.floor((touch.clientY - clickZoneLocation.top - cellSize * 0.5) / cellSize);
+
     this.dndHoveringCell = {
       file: this.getFile(col),
       rank: this.getRank(row)
     };
-    event.stopPropagation();
   }
+
+  private touchEventToBoardRawCoordinate = (event: any) => {
+    const cellSize = (this.size / 9.0);
+    const halfCellSize = cellSize / 2.0;
+
+    const eventTouch = event.touches[0];
+
+    const clickBounds = this.clickZone.nativeElement.getBoundingClientRect();
+
+    const col = Math.floor((eventTouch.clientX - clickBounds.left - halfCellSize) / cellSize);
+    const row = Math.floor((eventTouch.clientY - clickBounds.top - halfCellSize) / cellSize);
+
+    return {col, row};
+}
+
 
 }
