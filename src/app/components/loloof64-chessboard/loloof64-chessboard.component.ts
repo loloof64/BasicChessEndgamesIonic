@@ -3,6 +3,8 @@ import {
   OnChanges, SimpleChanges,
 } from '@angular/core';
 import { Loloof64ChessLogicService, ChessCell } from '../../services/loloof64-chess-logic.service';
+import { ModalController } from '@ionic/angular';
+import { Loloof64ChessPromotionPage } from '../../pages/loloof64-chess-promotion/loloof64-chess-promotion.page';
 
 @Component({
   selector: 'loloof64-chessboard',
@@ -33,7 +35,11 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
    */
   piecesValues: string [][];
 
-  constructor(private renderer: Renderer2, private chessService: Loloof64ChessLogicService) { }
+  constructor(
+    private renderer: Renderer2,
+    private chessService: Loloof64ChessLogicService,
+    private modalController: ModalController
+  ) { }
 
   ngOnInit() {
     this.chessService.newGame();
@@ -176,9 +182,21 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
     
   }
 
-  dragEnd = (event: any) => {
+  dragEnd = async (event: any) => {
     event.preventDefault();
     event.stopPropagation();
+
+    if (this.isPromotionMove()) {
+      const modal = await this.modalController.create({
+        component: Loloof64ChessPromotionPage,
+        componentProps: {
+          whiteTurn: this.chessService.isWhiteTurn(),
+          callback: this.validatePromotion,
+        }
+      });
+      modal.present();
+      return;
+    }
 
     const legalMove = this.chessService.checkAndDoMove(this.dndHighlightedCell, this.dndHoveringCell);
     if (legalMove) {
@@ -251,6 +269,21 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
       this.renderer.setStyle(this.verticalGuide.nativeElement, 'width', width + 'px');
       this.renderer.setStyle(this.verticalGuide.nativeElement, 'height', height + 'px');
     }
+  }
+
+  validatePromotion = (value: string) => {
+    this.modalController.dismiss();
+    const legalMove = this.chessService.checkAndDoMoveWithPromotion(
+      this.dndHighlightedCell,
+      this.dndHoveringCell,
+      value,
+    );
+    if (legalMove) {
+      this.piecesValues = this.piecesValuesFromPosition();
+    }
+
+    this.dndHighlightedCell = null;
+    this.dndHoveringCell = null;
   }
 
   dndHasStarted = () => {
@@ -331,6 +364,15 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
     }
 
     return `/assets/vectors/${rawImageName}`;
+  }
+
+  private isPromotionMove = () => {
+    if ([null, undefined].includes(this.dndHighlightedCell)) { return false; }
+    if ([null, undefined].includes(this.dndHoveringCell)) { return false; }
+
+    const isWhiteToPlay = this.chessService.isWhiteTurn();
+    return (isWhiteToPlay && (this.dndHoveringCell.rank === 7) ||
+      (!isWhiteToPlay && (this.dndHoveringCell.rank === 0)));
   }
 
 }

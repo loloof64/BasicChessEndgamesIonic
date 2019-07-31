@@ -1,0 +1,51 @@
+<ion-grid>
+  <ion-row>
+    <ion-col>
+      {{ message }}
+    </ion-col>
+  </ion-row>
+
+  <ion-row>
+    <ion-col>
+      <ion-button 
+      color="light"
+      (click)="sendQueen()"
+      >
+        <ion-img [src]="getQueenImage()"></ion-img>
+      </ion-button>
+    </ion-col>
+  </ion-row>
+
+  <ion-row>
+    <ion-col>
+      <ion-button 
+      color="light"
+      (click)="sendRook()"
+      >
+        <ion-img [src]="getRookImage()"></ion-img>
+      </ion-button>
+    </ion-col>
+  </ion-row>
+
+  <ion-row>
+    <ion-col>
+      <ion-button 
+      color="light"
+      (click)="sendBishop()"
+      >
+        <ion-img [src]="getBishopImage()"></ion-img>
+      </ion-button>
+    </ion-col>
+  </ion-row>
+
+  <ion-row>
+    <ion-col>
+      <ion-button 
+      color="light"
+      (click)="sendKnight()"
+      >
+        <ion-img [src]="getKnightImage()"></ion-img>
+      </ion-button>
+    </ion-col>
+  </ion-row>
+</ion-grid>

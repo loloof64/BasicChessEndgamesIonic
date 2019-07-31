@@ -9,6 +9,8 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 
+import { Loloof64ChessPromotionPageModule } from './pages/loloof64-chess-promotion/loloof64-chess-promotion.module';
+
 
 @NgModule({
   declarations: [AppComponent],
@@ -16,7 +18,8 @@ import { AppRoutingModule } from './app-routing.module';
   imports: [
     BrowserModule,
     IonicModule.forRoot(),
-    AppRoutingModule
+    AppRoutingModule,
+    Loloof64ChessPromotionPageModule,
   ],
   providers: [
     StatusBar,

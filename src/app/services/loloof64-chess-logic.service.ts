@@ -13,39 +13,47 @@ export class Loloof64ChessLogicService {
 
   constructor() { }
 
-  newGame(startPosition: string = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1') {
+  newGame = (startPosition: string = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1') => {
     this.game = new Chess(startPosition);
   }
 
-  isStalemate() {
+  isStalemate = () => {
     return this.game.in_stalemate();
   }
 
-  isThreeFoldRepetition() {
+  isThreeFoldRepetition = () => {
     return this.game.in_threefold_repetition();
   }
 
-  isDrawByMissingMaterial() {
+  isDrawByMissingMaterial = () => {
     return this.game.insufficient_material();
   }
 
-  isDrawByFiftyMovesRule() {
+  isDrawByFiftyMovesRule = () => {
     return this.game.in_draw() && (! this.game.insufficient_material());
   }
 
-  isCheckmate() {
+  isCheckmate = () => {
     return this.game.in_checkmate();
   }
 
-  getCurrentPosition() {
+  getCurrentPosition = () => {
     return this.game.fen();
   }
 
-  checkAndDoMove(start: ChessCell, end: ChessCell): boolean {
+  checkAndDoMove = (start: ChessCell, end: ChessCell): boolean => {
     const fromCell = this.cellToCoordsString(start);
     const toCell = this.cellToCoordsString(end);
     
     const moveResult = this.game.move({ from: fromCell, to: toCell });
+    return moveResult !== null;
+  }
+
+  checkAndDoMoveWithPromotion = (start: ChessCell, end: ChessCell, promotion: string): boolean => {
+    const fromCell = this.cellToCoordsString(start);
+    const toCell = this.cellToCoordsString(end);
+    
+    const moveResult = this.game.move({ from: fromCell, to: toCell, promotion, });
     return moveResult !== null;
   }
 
@@ -54,5 +62,9 @@ export class Loloof64ChessLogicService {
     const rankStr = String.fromCharCode('1'.charCodeAt(0) + cell.rank);
 
     return `${fileStr}${rankStr}`;
+  }
+
+  isWhiteTurn = () => {
+    return this.game.turn() === 'w';
   }
 }
