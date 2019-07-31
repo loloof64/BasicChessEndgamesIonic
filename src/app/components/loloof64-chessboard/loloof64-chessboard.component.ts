@@ -157,7 +157,7 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
     event.preventDefault();
     event.stopPropagation();
 
-    if (! this.gameInProgress) { return; }
+    if (! this.gameInProgress ) { return; }
 
     const boardRawCoordinates = this.touchEventToBoardRawCoordinate(event);
     const coordinatesInBoard = boardRawCoordinates !== undefined &&
@@ -169,9 +169,12 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
       const pieceValue = this.piecesValues[this.getRank(boardRawCoordinates.row)][this.getFile(boardRawCoordinates.col)];
       const isLegalPieceValue = 'PNBRQKpnbrqk'.split('').includes(pieceValue);
 
-      if ( ! isLegalPieceValue ) {
-        return;
-      }
+      if ( ! isLegalPieceValue ) { return; }
+
+      const isWhitePiece = pieceValue.charCodeAt(0) >= 'A'.charCodeAt(0) &&
+        pieceValue.charCodeAt(0) <= 'Z'.charCodeAt(0);
+      const pieceOfOurs = this.chessService.isWhiteTurn() === isWhitePiece;
+      if (! pieceOfOurs) { return; }
 
       this.dndHighlightedCell = {
         file: this.getFile(boardRawCoordinates.col),
