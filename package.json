@@ -29,6 +29,8 @@
     "chess.js": "^0.10.2",
     "core-js": "^2.5.4",
     "rxjs": "~6.5.1",
+    "stockfish.js": "^10.0.1",
+    "stockfish.wasm": "^0.5.9",
     "tslib": "^1.9.0",
     "zone.js": "~0.8.29"
   },
