@@ -3,7 +3,7 @@ import {
   OnChanges, SimpleChanges,
 } from '@angular/core';
 import { Loloof64ChessLogicService, ChessCell } from '../../services/loloof64-chess-logic.service';
-import { ModalController } from '@ionic/angular';
+import { ModalController, ToastController } from '@ionic/angular';
 import { Loloof64ChessPromotionPage } from '../../pages/loloof64-chess-promotion/loloof64-chess-promotion.page';
 
 @Component({
@@ -25,6 +25,7 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
 
   private dndHighlightedCell: ChessCell = null;
   private dndHoveringCell: ChessCell = null;
+  private gameInProgress = false;
 
   allFilesCoordinates: string [] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
   allRanksCoordinates: string [] = ['1', '2', '3', '4', '5', '6', '7', '8'];
@@ -38,7 +39,8 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
   constructor(
     private renderer: Renderer2,
     private chessService: Loloof64ChessLogicService,
-    private modalController: ModalController
+    private modalController: ModalController,
+    private toastController: ToastController,
   ) { }
 
   ngOnInit() {
@@ -350,8 +352,32 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
     return this.getPieceRawPath(pieceValue);
   }
 
-  private commitMove = () => {
+  private commitMove = async () => {
     this.piecesValues = this.piecesValuesFromPosition();
+
+    let gameFinishedMessage;
+    if (this.chessService.isCheckmate()) {
+      const playerSide = this.chessService.isWhiteTurn() ?
+        'Blacks' : 'Whites';
+      gameFinishedMessage = `The ${playerSide} win`;
+    } else if (this.chessService.isStalemate()) {
+      gameFinishedMessage = 'Stalemate';
+    } else if (this.chessService.isThreeFoldRepetition()) {
+      gameFinishedMessage = 'Draw by three fold repetition';
+    } else if (this.chessService.isDrawByMissingMaterial()) {
+      gameFinishedMessage = 'Draw by missing material';
+    } else if (this.chessService.isDrawByFiftyMovesRule()) {
+      gameFinishedMessage = 'Draw by fifty moves rule';
+    }
+
+    if (gameFinishedMessage !== undefined) {
+      this.gameInProgress = false;
+      const toast = await this.toastController.create({
+        message: gameFinishedMessage,
+        duration: 800,
+      });
+      toast.present();
+    }
   }
 
   private getPieceRawPath = (value: string): string => {
