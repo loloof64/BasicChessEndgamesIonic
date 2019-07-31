@@ -1,5 +1,6 @@
-import { Component, OnInit, DoCheck } from '@angular/core';
+import { Component, OnInit, DoCheck, ViewChild } from '@angular/core';
 import { Platform } from '@ionic/angular';
+import { PlayerType } from '../components/loloof64-chessboard/PlayerType';
 
 @Component({
   selector: 'app-home',
@@ -9,6 +10,7 @@ import { Platform } from '@ionic/angular';
 export class HomePage implements OnInit, DoCheck {
 
   boardSize: number;
+  @ViewChild('board') board: any;
 
   constructor(private platform: Platform) {}
 
@@ -20,10 +22,14 @@ export class HomePage implements OnInit, DoCheck {
     this.adjustBoardSize();
   }
 
-  private adjustBoardSize() {
+  private adjustBoardSize = () => {
     this.boardSize = this.platform.isPortrait() ?
       this.platform.width() :
       this.platform.height() - 56;
+  }
+
+  setBoardReadyStatus = () => {
+    this.board.startNewGame(PlayerType.Computer, PlayerType.Human);
   }
 
 }

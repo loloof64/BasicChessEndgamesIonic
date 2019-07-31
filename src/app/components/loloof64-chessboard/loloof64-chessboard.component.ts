@@ -7,6 +7,7 @@ import { Loloof64ChessLogicService, ChessCell } from '../../services/loloof64-ch
 import { ModalController, ToastController } from '@ionic/angular';
 import { Loloof64ChessEngineCommunicationService } from '../../services/loloof64-chess-engine-communication.service';
 import { Loloof64ChessPromotionPage } from '../../pages/loloof64-chess-promotion/loloof64-chess-promotion.page';
+import { PlayerType } from './PlayerType';
 
 @Component({
   selector: 'loloof64-chessboard',
@@ -19,7 +20,7 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
   @Input() size = 200.0;
   @Input() reversed = false;
 
-  @Output() engineReady: EventEmitter<void> = new EventEmitter<void>();
+  @Output() public gotReady: EventEmitter<void> = new EventEmitter<void>();
 
   @ViewChild('root') root: ElementRef;
   @ViewChild('click_zone') clickZone: ElementRef;
@@ -29,8 +30,13 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
 
   private dndHighlightedCell: ChessCell = null;
   private dndHoveringCell: ChessCell = null;
-  private gameInProgress = true;
+  private gameInProgress = false;
   private onEngineLayerMessageSubscription: Subscription;
+  private engineIsReady = false;
+
+  private whitePlayerType: PlayerType;
+  private blackPlayerType: PlayerType;
+  private computerIsThinking = false;
 
   allFilesCoordinates: string [] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
   allRanksCoordinates: string [] = ['1', '2', '3', '4', '5', '6', '7', '8'];
@@ -50,11 +56,8 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
   ) { }
 
   ngOnInit() {
-    this.chessService.newGame();
     this.updateRenderSize();
     this.piecesValues = this.piecesValuesFromPosition();
-    console.log(this.engineCommunicationLayer);
-    console.log(this.engineCommunicationLayer.onMessage$);
     this.onEngineLayerMessageSubscription = this.engineCommunicationLayer.
       onMessage$.subscribe(event => this.messageReceivedFromEngine(event));
   }
@@ -171,7 +174,8 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
     event.preventDefault();
     event.stopPropagation();
 
-    if (! this.gameInProgress ) { return; }
+    if ( ! this.gameInProgress ) { return; }
+    if (this.computerIsThinking) { return; }
 
     const boardRawCoordinates = this.touchEventToBoardRawCoordinate(event);
     const coordinatesInBoard = boardRawCoordinates !== undefined &&
@@ -225,9 +229,9 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
       return;
     }
 
-    const legalMove = this.chessService.checkAndDoMove(this.dndHighlightedCell, this.dndHoveringCell);
+    const legalMove = await this.chessService.checkAndDoMove(this.dndHighlightedCell, this.dndHoveringCell);
     if (legalMove) {
-      this.commitMove();
+      this.commitHumanMove();
     }
 
     this.dndHighlightedCell = null;
@@ -298,15 +302,15 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
     }
   }
 
-  validatePromotion = (value: string) => {
+  validatePromotion = async (value: string) => {
     this.modalController.dismiss();
-    const legalMove = this.chessService.checkAndDoMoveWithPromotion(
+    const legalMove = await this.chessService.checkAndDoMoveWithPromotion(
       this.dndHighlightedCell,
       this.dndHoveringCell,
       value,
     );
     if (legalMove) {
-      this.commitMove();
+      this.commitHumanMove();
     }
 
     this.dndHighlightedCell = null;
@@ -320,6 +324,42 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
   dndPieceImageSrc = () => {
     const dndPieceValue = this.piecesValues[this.dndHighlightedCell.rank][this.dndHighlightedCell.file];
     return this.getPieceRawPath(dndPieceValue);
+  }
+
+  startNewGame = (white: PlayerType, black: PlayerType, startPosition: string) => {
+    this.whitePlayerType = white;
+    this.blackPlayerType = black;
+    if (startPosition) {
+      this.chessService.newGame(startPosition);
+    } else {
+      this.chessService.newGame();
+    }
+    this.piecesValues = this.piecesValuesFromPosition();
+    this.engineCommunicationLayer.postMessage('ucinewgame');
+    this.engineCommunicationLayer.postMessage(
+      `position ${startPosition !== undefined ? 'fen ' + startPosition : 'startpos'}`
+    );
+
+    this.askComputerMoveIfAppropriate();
+    this.gameInProgress = true;
+  }
+
+  askComputerMoveIfAppropriate = () => {
+    const whiteToPlay = this.chessService.isWhiteTurn();
+    const computerToPlay = (whiteToPlay && this.whitePlayerType === PlayerType.Computer) ||
+      (!whiteToPlay && this.blackPlayerType === PlayerType.Computer);
+
+    if (! computerToPlay) { return; }
+
+    this.computerIsThinking = true;
+
+    const currentPosition = this.chessService.getCurrentPosition();
+    this.engineCommunicationLayer.postMessage(
+      `position fen ${currentPosition}`
+    );
+    this.engineCommunicationLayer.postMessage(
+      'go movetime 2'
+    );
   }
 
   private touchEventToBoardRawCoordinate = (event: any) => {
@@ -371,9 +411,16 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
     return this.getPieceRawPath(pieceValue);
   }
 
-  private commitMove = async () => {
+  private commitHumanMove = async () => {
     this.piecesValues = this.piecesValuesFromPosition();
+    this.checkAndUpdateGameFinishedStatus();
 
+    if (! this.gameInProgress) { return; }
+
+    this.askComputerMoveIfAppropriate();
+  }
+
+  private checkAndUpdateGameFinishedStatus = async () => {
     let gameFinishedMessage;
     if (this.chessService.isCheckmate()) {
       const playerSide = this.chessService.isWhiteTurn() ?
@@ -397,6 +444,39 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
       });
       toast.present();
     }
+  }
+
+  private commitComputerMove = async (from: string, to: string) => {
+
+    await this.chessService.checkAndDoMove(
+      this.algebraicToChessCell(from),
+      this.algebraicToChessCell(to)
+    );
+
+    this.piecesValues = this.piecesValuesFromPosition();
+    this.checkAndUpdateGameFinishedStatus();
+    this.computerIsThinking = false;
+  }
+
+  private commitComputerMoveWithPromotion = async (from: string, to: string, promotion: string) => {
+    await this.chessService.checkAndDoMoveWithPromotion(
+      this.algebraicToChessCell(from),
+      this.algebraicToChessCell(to),
+      promotion
+    );
+
+    this.piecesValues = this.piecesValuesFromPosition();
+    this.checkAndUpdateGameFinishedStatus();
+    this.computerIsThinking = false;
+  }
+
+  private algebraicToChessCell = (coords: string): ChessCell => {
+    const file = coords.charCodeAt(0) - 'a'.charCodeAt(0);
+    const rank = coords.charCodeAt(1) - '1'.charCodeAt(0);
+
+    return {
+      file, rank
+    } as ChessCell;
   }
 
   private getPieceRawPath = (value: string): string => {
@@ -431,7 +511,25 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
   }
 
   private messageReceivedFromEngine = (message: string) => {
-    console.log(message);
+    if ('uciok' === message && ! this.engineIsReady) {
+      this.engineCommunicationLayer.postMessage('isready');
+    } else if ( 'readyok' === message ) {
+      this.gotReady.emit();
+      this.engineIsReady = true;
+    } else {
+      const match = message.match(/^bestmove ([a-h][1-8])([a-h][1-8])([qrbn])?/);
+      if (match) {
+        const from = match[1];
+        const to = match[2];
+        const promotion = match[3];
+
+        if (promotion) {
+          this.commitComputerMoveWithPromotion(from, to, promotion);
+        } else {
+          this.commitComputerMove(from, to);
+        }
+      }
+    }
   }
 
 }

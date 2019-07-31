@@ -10,5 +10,7 @@
     <loloof64-chessboard 
       [size]="boardSize"
       [reversed]="false"
+      (gotReady)="setBoardReadyStatus()"
+      #board
     ></loloof64-chessboard>
 </ion-content>

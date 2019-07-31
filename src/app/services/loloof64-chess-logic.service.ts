@@ -41,20 +41,24 @@ export class Loloof64ChessLogicService {
     return this.game.fen();
   }
 
-  checkAndDoMove = (start: ChessCell, end: ChessCell): boolean => {
-    const fromCell = this.cellToCoordsString(start);
-    const toCell = this.cellToCoordsString(end);
-    
-    const moveResult = this.game.move({ from: fromCell, to: toCell });
-    return moveResult !== null;
+  checkAndDoMove = (start: ChessCell, end: ChessCell) => {
+    return new Promise((resolve) => {
+      const fromCell = this.cellToCoordsString(start);
+      const toCell = this.cellToCoordsString(end);
+      
+      const moveResult = this.game.move({ from: fromCell, to: toCell });
+      resolve(moveResult !== null);
+    });
   }
 
-  checkAndDoMoveWithPromotion = (start: ChessCell, end: ChessCell, promotion: string): boolean => {
-    const fromCell = this.cellToCoordsString(start);
-    const toCell = this.cellToCoordsString(end);
-    
-    const moveResult = this.game.move({ from: fromCell, to: toCell, promotion, });
-    return moveResult !== null;
+  checkAndDoMoveWithPromotion = (start: ChessCell, end: ChessCell, promotion: string) => {
+    return new Promise((resolve) => {
+      const fromCell = this.cellToCoordsString(start);
+      const toCell = this.cellToCoordsString(end);
+      
+      const moveResult = this.game.move({ from: fromCell, to: toCell, promotion, });
+      resolve(moveResult !== null);
+    });
   }
 
   private cellToCoordsString(cell: ChessCell): string {
