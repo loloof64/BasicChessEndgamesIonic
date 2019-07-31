@@ -1,9 +1,11 @@
 import {
-  Component, OnInit, Renderer2, ElementRef, Input, ViewChild,
-  OnChanges, SimpleChanges,
+  Component, OnInit, OnDestroy, Renderer2, ElementRef, Input, Output, ViewChild,
+  OnChanges, SimpleChanges, EventEmitter
 } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { Loloof64ChessLogicService, ChessCell } from '../../services/loloof64-chess-logic.service';
 import { ModalController, ToastController } from '@ionic/angular';
+import { Loloof64ChessEngineCommunicationService } from '../../services/loloof64-chess-engine-communication.service';
 import { Loloof64ChessPromotionPage } from '../../pages/loloof64-chess-promotion/loloof64-chess-promotion.page';
 
 @Component({
@@ -12,10 +14,12 @@ import { Loloof64ChessPromotionPage } from '../../pages/loloof64-chess-promotion
   styleUrls: ['./loloof64-chessboard.component.scss'],
   providers: [Loloof64ChessLogicService],
 })
-export class Loloof64ChessboardComponent implements OnInit, OnChanges {
+export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() size = 200.0;
   @Input() reversed = false;
+
+  @Output() engineReady: EventEmitter<void> = new EventEmitter<void>();
 
   @ViewChild('root') root: ElementRef;
   @ViewChild('click_zone') clickZone: ElementRef;
@@ -26,6 +30,7 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
   private dndHighlightedCell: ChessCell = null;
   private dndHoveringCell: ChessCell = null;
   private gameInProgress = true;
+  private onEngineLayerMessageSubscription: Subscription;
 
   allFilesCoordinates: string [] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
   allRanksCoordinates: string [] = ['1', '2', '3', '4', '5', '6', '7', '8'];
@@ -41,12 +46,21 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
     private chessService: Loloof64ChessLogicService,
     private modalController: ModalController,
     private toastController: ToastController,
+    private engineCommunicationLayer: Loloof64ChessEngineCommunicationService,
   ) { }
 
   ngOnInit() {
     this.chessService.newGame();
     this.updateRenderSize();
     this.piecesValues = this.piecesValuesFromPosition();
+    console.log(this.engineCommunicationLayer);
+    console.log(this.engineCommunicationLayer.onMessage$);
+    this.onEngineLayerMessageSubscription = this.engineCommunicationLayer.
+      onMessage$.subscribe(event => this.messageReceivedFromEngine(event));
+  }
+
+  ngOnDestroy() {
+    this.onEngineLayerMessageSubscription.unsubscribe();
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -414,6 +428,10 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
     const isWhiteToPlay = this.chessService.isWhiteTurn();
     return (isWhiteToPlay && (this.dndHoveringCell.rank === 7) ||
       (!isWhiteToPlay && (this.dndHoveringCell.rank === 0)));
+  }
+
+  private messageReceivedFromEngine = (message: string) => {
+    console.log(message);
   }
 
 }
