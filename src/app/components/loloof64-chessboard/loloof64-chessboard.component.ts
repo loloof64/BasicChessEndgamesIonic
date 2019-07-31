@@ -186,6 +186,12 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
     event.preventDefault();
     event.stopPropagation();
 
+    const dragAndDropStarted =
+      ![null, undefined].includes(this.dndHighlightedCell) &&
+      ![null, undefined].includes(this.dndHoveringCell);
+
+    if (! dragAndDropStarted) { return; }
+
     if (this.isPromotionMove()) {
       const modal = await this.modalController.create({
         component: Loloof64ChessPromotionPage,
