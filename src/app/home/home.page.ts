@@ -9,8 +9,10 @@ import { PlayerType } from '../components/loloof64-chessboard/PlayerType';
 })
 export class HomePage implements OnInit, DoCheck {
 
-  boardSize: number;
   @ViewChild('board') board: any;
+  
+  boardSize: number;
+  boardBusy = true;
 
   constructor(private platform: Platform) {}
 
@@ -30,6 +32,7 @@ export class HomePage implements OnInit, DoCheck {
 
   setBoardReadyStatus = () => {
     this.board.startNewGame(PlayerType.Computer, PlayerType.Human);
+    this.boardBusy = false;
   }
 
 }
