@@ -25,7 +25,7 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
 
   private dndHighlightedCell: ChessCell = null;
   private dndHoveringCell: ChessCell = null;
-  private gameInProgress = false;
+  private gameInProgress = true;
 
   allFilesCoordinates: string [] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
   allRanksCoordinates: string [] = ['1', '2', '3', '4', '5', '6', '7', '8'];
@@ -156,6 +156,8 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
   dragStart = (event: any) => {
     event.preventDefault();
     event.stopPropagation();
+
+    if (! this.gameInProgress) { return; }
 
     const boardRawCoordinates = this.touchEventToBoardRawCoordinate(event);
     const coordinatesInBoard = boardRawCoordinates !== undefined &&
