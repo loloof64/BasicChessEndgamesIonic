@@ -206,7 +206,7 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
 
     const legalMove = this.chessService.checkAndDoMove(this.dndHighlightedCell, this.dndHoveringCell);
     if (legalMove) {
-      this.piecesValues = this.piecesValuesFromPosition();
+      this.commitMove();
     }
 
     this.dndHighlightedCell = null;
@@ -285,7 +285,7 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
       value,
     );
     if (legalMove) {
-      this.piecesValues = this.piecesValuesFromPosition();
+      this.commitMove();
     }
 
     this.dndHighlightedCell = null;
@@ -348,6 +348,10 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges {
   getPiecePath = (row: number, col: number) => {
     const pieceValue = this.piecesValues[this.getRank(row)][this.getFile(col)];
     return this.getPieceRawPath(pieceValue);
+  }
+
+  private commitMove = () => {
+    this.piecesValues = this.piecesValuesFromPosition();
   }
 
   private getPieceRawPath = (value: string): string => {
