@@ -506,6 +506,10 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
     if ([null, undefined].includes(this.dndHoveringCell)) { return false; }
 
     const isWhiteToPlay = this.chessService.isWhiteTurn();
+    const movedPiece = this.piecesValues[this.dndHighlightedCell.rank][this.dndHighlightedCell.file];
+    if (! ['P', 'p'].includes(movedPiece)) {
+      return false;
+    }
     return (isWhiteToPlay && (this.dndHoveringCell.rank === 7) ||
       (!isWhiteToPlay && (this.dndHoveringCell.rank === 0)));
   }
