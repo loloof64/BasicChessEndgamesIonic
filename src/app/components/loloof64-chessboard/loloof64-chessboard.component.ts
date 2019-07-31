@@ -21,6 +21,7 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
   @Input() reversed = false;
 
   @Output() public gotReady: EventEmitter<void> = new EventEmitter<void>();
+  @Output() public gotBusy: EventEmitter<void> = new EventEmitter<void>();
 
   @ViewChild('root') root: ElementRef;
   @ViewChild('click_zone') clickZone: ElementRef;
@@ -352,6 +353,7 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
     if (! computerToPlay) { return; }
 
     this.computerIsThinking = true;
+    this.gotBusy.emit();
 
     const currentPosition = this.chessService.getCurrentPosition();
     this.engineCommunicationLayer.postMessage(
@@ -453,9 +455,7 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
       this.algebraicToChessCell(to)
     );
 
-    this.piecesValues = this.piecesValuesFromPosition();
-    this.checkAndUpdateGameFinishedStatus();
-    this.computerIsThinking = false;
+    this.finishComputerMove();
   }
 
   private commitComputerMoveWithPromotion = async (from: string, to: string, promotion: string) => {
@@ -465,9 +465,14 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
       promotion
     );
 
+    this.finishComputerMove();
+  }
+
+  private finishComputerMove = () => {
     this.piecesValues = this.piecesValuesFromPosition();
     this.checkAndUpdateGameFinishedStatus();
     this.computerIsThinking = false;
+    this.gotReady.emit();
   }
 
   private algebraicToChessCell = (coords: string): ChessCell => {

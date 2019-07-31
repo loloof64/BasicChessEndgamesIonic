@@ -13,6 +13,7 @@ export class HomePage implements OnInit, DoCheck {
   
   boardSize: number;
   boardBusy = true;
+  needToStartGame = true;
 
   constructor(private platform: Platform) {}
 
@@ -31,8 +32,15 @@ export class HomePage implements OnInit, DoCheck {
   }
 
   setBoardReadyStatus = () => {
-    this.board.startNewGame(PlayerType.Computer, PlayerType.Human);
     this.boardBusy = false;
+    if (this.needToStartGame) {
+      this.board.startNewGame(PlayerType.Computer, PlayerType.Human);
+      this.needToStartGame = false;
+    }
+  }
+
+  setBoardBusyStatus = () => {
+    this.boardBusy = true;
   }
 
 }
