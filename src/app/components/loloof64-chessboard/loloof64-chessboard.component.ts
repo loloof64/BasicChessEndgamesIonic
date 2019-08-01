@@ -82,6 +82,7 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
     const sizeChange = changes.size;
     if (sizeChange !== undefined) {
       this.updateRenderSize();
+      this.updateLastMoveArrow();
     }
   }
 
