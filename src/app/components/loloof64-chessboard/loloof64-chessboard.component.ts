@@ -36,6 +36,7 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
   @ViewChild('lastMoveBaseLine') lastMoveBaseLine: ElementRef;
   @ViewChild('lastMoveArrow1') lastMoveArrow1: ElementRef;
   @ViewChild('lastMoveArrow2') lastMoveArrow2: ElementRef;
+  @ViewChild('lastMovePoint') lastMovePoint: ElementRef;
   
   private dndHighlightedCell: ChessCell = null;
   private dndHoveringCell: ChessCell = null;
@@ -411,9 +412,10 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
     if ([null, undefined].includes(this.lastMoveBaseLine)) { return; }
     if ([null, undefined].includes(this.lastMoveArrow1)) { return; }
     if ([null, undefined].includes(this.lastMoveArrow2)) { return; }
+    if ([null, undefined].includes(this.lastMovePoint)) { return; }
 
     const cellSize = this.size / 9.0;
-    const halfThickness = cellSize * 0.2;
+    const halfThickness = cellSize * 0.08;
 
     const fromFile = this.lastMove.from.file;
     const fromRank = this.lastMove.from.rank;
@@ -433,6 +435,7 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
     this.setLastMoveArrowBaseline(ax, ay, bx, by, halfThickness);
     this.setLastMoveArrow1(ax, ay, bx, by, halfThickness);
     this.setLastMoveArrow2(ax, ay, bx, by, halfThickness);
+    this.setLastMovePoint(ax, ay, bx, by, halfThickness);
   }
 
   private setLastMoveArrowBaseline = (ax: number, ay: number, bx: number, by: number, halfThickness: number) => {
@@ -449,9 +452,9 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
 
     const left = realAx;
     const top = realAy;
-    const width = 2 * halfThickness + 1;
+    const width = 2 * halfThickness;
     const height = length;
-    const transformOrigin = `${halfThickness + 1}px ${0}px`;
+    const transformOrigin = `${halfThickness}px ${0}px`;
 
     this.renderer.setStyle(this.lastMoveBaseLine.nativeElement, 'width', width + 'px');
     this.renderer.setStyle(this.lastMoveBaseLine.nativeElement, 'height', height + 'px');
@@ -481,9 +484,9 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
 
     const left = realBx;
     const top = realBy;
-    const width = 2 * halfThickness + 1;
+    const width = 2 * halfThickness;
     const height = length;
-    const transformOrigin = `${halfThickness + 1}px ${0}px`;
+    const transformOrigin = `${halfThickness}px ${0}px`;
 
     this.renderer.setStyle(this.lastMoveArrow1.nativeElement, 'width', width + 'px');
     this.renderer.setStyle(this.lastMoveArrow1.nativeElement, 'height', height + 'px');
@@ -513,9 +516,9 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
 
     const left = realBx;
     const top = realBy;
-    const width = 2 * halfThickness + 1;
+    const width = 2 * halfThickness;
     const height = length;
-    const transformOrigin = `${halfThickness + 1}px ${0}px`;
+    const transformOrigin = `${halfThickness}px ${0}px`;
 
     this.renderer.setStyle(this.lastMoveArrow2.nativeElement, 'width', width + 'px');
     this.renderer.setStyle(this.lastMoveArrow2.nativeElement, 'height', height + 'px');
@@ -529,6 +532,38 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
     this.renderer.setStyle(this.lastMoveArrow2.nativeElement, '-ms-transform-origin', transformOrigin);
     this.renderer.setStyle(this.lastMoveArrow2.nativeElement, '-moz-transform-origin', transformOrigin);
     this.renderer.setStyle(this.lastMoveArrow2.nativeElement, '-webkit-origin', transformOrigin);
+  }
+
+  private setLastMovePoint = (ax: number, ay: number, bx: number, by: number, halfThickness: number) => {
+    const realAx = ax - halfThickness;
+    const realAy = ay;
+    const realBx = bx - halfThickness;
+    const realBy = by - halfThickness;
+
+    const vectX = realBx - realAx;
+    const vectY = realBy - realAy;
+
+    const angleRad = Math.atan2(vectY, vectX) + Math.PI / 4.0;
+    const length = 2 * halfThickness;
+
+    const left = realBx;
+    const top = realBy;
+    const width = 2 * halfThickness;
+    const height = length;
+    const transformOrigin = `center`;
+
+    this.renderer.setStyle(this.lastMovePoint.nativeElement, 'width', width + 'px');
+    this.renderer.setStyle(this.lastMovePoint.nativeElement, 'height', height + 'px');
+    this.renderer.setStyle(this.lastMovePoint.nativeElement, 'left', left + 'px');
+    this.renderer.setStyle(this.lastMovePoint.nativeElement, 'top', top + 'px');
+    this.renderer.setStyle(this.lastMovePoint.nativeElement, 'transform', `rotate(${angleRad}rad)`);
+    this.renderer.setStyle(this.lastMovePoint.nativeElement, '-ms-transform', `rotate(${angleRad}rad)`);
+    this.renderer.setStyle(this.lastMovePoint.nativeElement, '-moz-transform', `rotate(${angleRad}rad)`);
+    this.renderer.setStyle(this.lastMovePoint.nativeElement, '-webkit-transform', `rotate(${angleRad}rad)`);
+    this.renderer.setStyle(this.lastMovePoint.nativeElement, 'transform-origin', transformOrigin);
+    this.renderer.setStyle(this.lastMovePoint.nativeElement, '-ms-transform-origin', transformOrigin);
+    this.renderer.setStyle(this.lastMovePoint.nativeElement, '-moz-transform-origin', transformOrigin);
+    this.renderer.setStyle(this.lastMovePoint.nativeElement, '-webkit-origin', transformOrigin);
   }
 
   mustShowPiece = (row: number, col: number): boolean => {
