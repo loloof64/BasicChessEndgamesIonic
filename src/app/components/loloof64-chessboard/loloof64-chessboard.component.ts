@@ -34,8 +34,7 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
   @ViewChild('horizontalGuide') horizontalGuide: ElementRef;
   @ViewChild('verticalGuide') verticalGuide: ElementRef;
   @ViewChild('lastMoveBaseLine') lastMoveBaseLine: ElementRef;
-  @ViewChild('lastMoveArrow1') lastMoveArrow1: ElementRef;
-  @ViewChild('lastMoveArrow2') lastMoveArrow2: ElementRef;
+  @ViewChild('lastMoveTriangle') lastMoveTriangle: ElementRef;
   
   private dndHighlightedCell: ChessCell = null;
   private dndHoveringCell: ChessCell = null;
@@ -409,11 +408,10 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
     }
 
     if ([null, undefined].includes(this.lastMoveBaseLine)) { return; }
-    if ([null, undefined].includes(this.lastMoveArrow1)) { return; }
-    if ([null, undefined].includes(this.lastMoveArrow2)) { return; }
+    if ([null, undefined].includes(this.lastMoveTriangle)) { return; }
 
     const cellSize = this.size / 9.0;
-    const thickness = 1;/*cellSize * 0.3;*/
+    const thickness = cellSize * 0.3;
 
     const fromFile = this.lastMove.from.file;
     const fromRank = this.lastMove.from.rank;
@@ -425,28 +423,34 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
     const toCol = this.reversed ? 7 - toFile : toFile;
     const toRow = this.reversed ? 7 - toRank : 7 - toRank;
 
-    let ax = cellSize * (fromCol + 1.0) - thickness * 0.5;
+    let ax = cellSize * (fromCol + 1.0);
     let ay = cellSize * (fromRow + 1.0);
-    let bx = cellSize * (toCol + 1.0) - thickness * 0.5;
+    let bx = cellSize * (toCol + 1.0);
     let by = cellSize * (toRow + 1.0);
 
-    this.setLastMoveArrowBaseline(ax, ay, bx, by, 1);
-    this.setLastMoveArrowArrow1(ax, ay, bx, by, 1);
-    this.setLastMoveArrowArrow2(ax, ay, bx, by, 1);
+    this.setLastMoveArrowBaseline(ax, ay, bx, by, thickness);
+    //this.setLastMoveArrowTriangle(ax, ay, bx, by, thickness);
   }
 
   private setLastMoveArrowBaseline = (ax: number, ay: number, bx: number, by: number, thickness: number) => {
     
-    const vectX = bx - ax;
-    const vectY = by - ay;
+    const realAx = ax;
+    const realAy = ay;
+    const realBx = bx;
+    const realBy = by;
+
+    const vectX = realBx - realAx;
+    const vectY = realBy - realAy;
+
+    const vectYSide = vectY > 0 ? 1 : vectY < 0 ? -1 : 0;
 
     const angleRad = Math.atan2(vectY, vectX) - Math.PI / 2.0;
     const length = Math.sqrt(vectX * vectX + vectY * vectY);
 
     this.renderer.setStyle(this.lastMoveBaseLine.nativeElement, 'width', thickness + 'px');
     this.renderer.setStyle(this.lastMoveBaseLine.nativeElement, 'height', length + 'px');
-    this.renderer.setStyle(this.lastMoveBaseLine.nativeElement, 'left', ax + 'px');
-    this.renderer.setStyle(this.lastMoveBaseLine.nativeElement, 'top', ay + 'px');
+    this.renderer.setStyle(this.lastMoveBaseLine.nativeElement, 'left', (realAx - thickness * vectYSide * 0.5) + 'px');
+    this.renderer.setStyle(this.lastMoveBaseLine.nativeElement, 'top', realAy + 'px');
     this.renderer.setStyle(this.lastMoveBaseLine.nativeElement, 'transform', `rotate(${angleRad}rad)`);
     this.renderer.setStyle(this.lastMoveBaseLine.nativeElement, '-ms-transform', `rotate(${angleRad}rad)`);
     this.renderer.setStyle(this.lastMoveBaseLine.nativeElement, '-moz-transform', `rotate(${angleRad}rad)`);
@@ -457,50 +461,8 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
     this.renderer.setStyle(this.lastMoveBaseLine.nativeElement, '-webkit-origin', `0% 0%`);
   }
 
-  private setLastMoveArrowArrow1 = (ax: number, ay: number, bx: number, by: number, thickness: number) => {
-  
-    const baseLineVectX = bx - ax;
-    const baseLineVectY = by - ay;
-    const baseLineLength = Math.sqrt(baseLineVectX * baseLineVectX + baseLineVectY * baseLineVectY);
-    const length = baseLineLength * 0.2;
-
-    const angleRad = Math.atan2(baseLineVectY, baseLineVectX) + Math.PI / 4.0;
-
-    this.renderer.setStyle(this.lastMoveArrow1.nativeElement, 'width', thickness + 'px');
-    this.renderer.setStyle(this.lastMoveArrow1.nativeElement, 'height', length + 'px');
-    this.renderer.setStyle(this.lastMoveArrow1.nativeElement, 'left', bx + 'px');
-    this.renderer.setStyle(this.lastMoveArrow1.nativeElement, 'top', by + 'px');
-    this.renderer.setStyle(this.lastMoveArrow1.nativeElement, 'transform', `rotate(${angleRad}rad)`);
-    this.renderer.setStyle(this.lastMoveArrow1.nativeElement, '-ms-transform', `rotate(${angleRad}rad)`);
-    this.renderer.setStyle(this.lastMoveArrow1.nativeElement, '-moz-transform', `rotate(${angleRad}rad)`);
-    this.renderer.setStyle(this.lastMoveArrow1.nativeElement, '-webkit-transform', `rotate(${angleRad}rad)`);
-    this.renderer.setStyle(this.lastMoveArrow1.nativeElement, 'transform-origin', `0% 0%`);
-    this.renderer.setStyle(this.lastMoveArrow1.nativeElement, '-ms-transform-origin', `0% 0%`);
-    this.renderer.setStyle(this.lastMoveArrow1.nativeElement, '-moz-transform-origin', `0% 0%`);
-    this.renderer.setStyle(this.lastMoveArrow1.nativeElement, '-webkit-origin', `0% 0%`);
-  }
-
-  private setLastMoveArrowArrow2 = (ax: number, ay: number, bx: number, by: number, thickness: number) => {
+  private setLastMoveArrowTiangle = (ax: number, ay: number, bx: number, by: number, thickness: number) => {
     
-    const baseLineVectX = bx - ax;
-    const baseLineVectY = by - ay;
-    const baseLineLength = Math.sqrt(baseLineVectX * baseLineVectX + baseLineVectY * baseLineVectY);
-    const length = baseLineLength * 0.2;
-
-    const angleRad = Math.atan2(baseLineVectY, baseLineVectX) + Math.PI - Math.PI / 4.0;
-
-    this.renderer.setStyle(this.lastMoveArrow2.nativeElement, 'width', thickness + 'px');
-    this.renderer.setStyle(this.lastMoveArrow2.nativeElement, 'height', length + 'px');
-    this.renderer.setStyle(this.lastMoveArrow2.nativeElement, 'left', bx + 'px');
-    this.renderer.setStyle(this.lastMoveArrow2.nativeElement, 'top', by + 'px');
-    this.renderer.setStyle(this.lastMoveArrow2.nativeElement, 'transform', `rotate(${angleRad}rad)`);
-    this.renderer.setStyle(this.lastMoveArrow2.nativeElement, '-ms-transform', `rotate(${angleRad}rad)`);
-    this.renderer.setStyle(this.lastMoveArrow2.nativeElement, '-moz-transform', `rotate(${angleRad}rad)`);
-    this.renderer.setStyle(this.lastMoveArrow2.nativeElement, '-webkit-transform', `rotate(${angleRad}rad)`);
-    this.renderer.setStyle(this.lastMoveArrow2.nativeElement, 'transform-origin', `0% 0%`);
-    this.renderer.setStyle(this.lastMoveArrow2.nativeElement, '-ms-transform-origin', `0% 0%`);
-    this.renderer.setStyle(this.lastMoveArrow2.nativeElement, '-moz-transform-origin', `0% 0%`);
-    this.renderer.setStyle(this.lastMoveArrow2.nativeElement, '-webkit-origin', `0% 0%`);
   }
 
   mustShowPiece = (row: number, col: number): boolean => {

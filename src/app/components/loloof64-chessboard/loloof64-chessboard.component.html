@@ -56,7 +56,7 @@
     class="dndGuideLine"
     #verticalGuide
   ></div>
-  
+
   <img
     *ngIf="dndHasStarted()"
     [src]="dndPieceImageSrc()"
@@ -92,13 +92,7 @@
   <div
     *ngIf="mustShowLastMove()"
     class="lastMoveArrow"
-    #lastMoveArrow1
-  >
-  </div>
-  <div
-    *ngIf="mustShowLastMove()"
-    class="lastMoveArrow"
-    #lastMoveArrow2
+    #lastMoveTriangle
   >
   </div>
 </ng-container>
