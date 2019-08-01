@@ -477,7 +477,7 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
     const vectY = realBy - realAy;
 
     const angleRad = Math.atan2(vectY, vectX) - Math.PI / 2.0 -  3 * Math.PI / 4.0;
-    const length = Math.sqrt(vectX * vectX + vectY * vectY);
+    const length = Math.sqrt(vectX * vectX + vectY * vectY) * 0.4;
 
     const left = realBx;
     const top = realBy;
@@ -509,7 +509,7 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
     const vectY = realBy - realAy;
 
     const angleRad = Math.atan2(vectY, vectX) - Math.PI / 2.0 +  3 * Math.PI / 4.0;
-    const length = Math.sqrt(vectX * vectX + vectY * vectY);
+    const length = Math.sqrt(vectX * vectX + vectY * vectY) * 0.4;
 
     const left = realBx;
     const top = realBy;
