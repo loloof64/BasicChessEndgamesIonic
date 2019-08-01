@@ -9,6 +9,11 @@ import { Loloof64ChessEngineCommunicationService } from '../../services/loloof64
 import { Loloof64ChessPromotionPage } from '../../pages/loloof64-chess-promotion/loloof64-chess-promotion.page';
 import { PlayerType } from './PlayerType';
 
+interface ChessMove {
+  from: ChessCell;
+  to: ChessCell;
+}
+
 @Component({
   selector: 'loloof64-chessboard',
   templateUrl: './loloof64-chessboard.component.html',
@@ -28,17 +33,22 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
   @ViewChild('dndPiece') dndPiece: ElementRef;
   @ViewChild('horizontalGuide') horizontalGuide: ElementRef;
   @ViewChild('verticalGuide') verticalGuide: ElementRef;
-
+  @ViewChild('lastMoveBaseLine') lastMoveBaseLine: ElementRef;
+  @ViewChild('lastMoveArrow1') lastMoveArrow1: ElementRef;
+  @ViewChild('lastMoveArrow2') lastMoveArrow2: ElementRef;
+  
   private dndHighlightedCell: ChessCell = null;
   private dndHoveringCell: ChessCell = null;
   private gameInProgress = false;
   private onEngineLayerMessageSubscription: Subscription;
   private engineIsReady = false;
-
+  
   private whitePlayerType: PlayerType;
   private blackPlayerType: PlayerType;
   private computerIsThinking = false;
-
+  private lastMove: ChessMove;
+  private lastMoveActive = true;
+  
   allFilesCoordinates: string [] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
   allRanksCoordinates: string [] = ['1', '2', '3', '4', '5', '6', '7', '8'];
 
@@ -195,6 +205,8 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
       const pieceOfOurs = this.chessService.isWhiteTurn() === isWhitePiece;
       if (! pieceOfOurs) { return; }
 
+      this.lastMove = undefined;
+
       this.dndHighlightedCell = {
         file: this.getFile(boardRawCoordinates.col),
         rank: this.getRank(boardRawCoordinates.row)
@@ -232,6 +244,10 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
 
     const legalMove = await this.chessService.checkAndDoMove(this.dndHighlightedCell, this.dndHoveringCell);
     if (legalMove) {
+      this.lastMove = {
+        from: this.dndHighlightedCell,
+        to: this.dndHoveringCell,
+      };
       this.commitHumanMove();
     }
 
@@ -311,6 +327,10 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
       value,
     );
     if (legalMove) {
+      this.lastMove = {
+        from: this.dndHighlightedCell,
+        to: this.dndHoveringCell,
+      };
       this.commitHumanMove();
     }
 
@@ -345,6 +365,10 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
     this.gameInProgress = true;
   }
 
+  mustShowLastMove = () => {
+    return this.lastMoveActive === true;
+  }
+
   askComputerMoveIfAppropriate = () => {
     const whiteToPlay = this.chessService.isWhiteTurn();
     const computerToPlay = (whiteToPlay && this.whitePlayerType === PlayerType.Computer) ||
@@ -376,6 +400,59 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
     const row = Math.floor((eventTouch.clientY - clickBounds.top - halfCellSize) / cellSize);
 
     return {col, row};
+  }
+
+  private updateLastMoveArrow = () => {
+
+    if ([null, undefined].includes(this.lastMove)) {
+      return;
+    }
+
+    if ([null, undefined].includes(this.lastMoveBaseLine)) { return; }
+    if ([null, undefined].includes(this.lastMoveArrow1)) { return; }
+    if ([null, undefined].includes(this.lastMoveArrow2)) { return; }
+
+    const cellSize = this.size / 9.0;
+    const thickness = 1;/*cellSize * 0.3;*/
+
+    const fromFile = this.lastMove.from.file;
+    const fromRank = this.lastMove.from.rank;
+    const toFile = this.lastMove.to.file;
+    const toRank = this.lastMove.to.rank;
+
+    const fromCol = this.reversed ? 7 - fromFile : fromFile;
+    const fromRow = this.reversed ? 7 - fromRank : 7 - fromRank;
+    const toCol = this.reversed ? 7 - toFile : toFile;
+    const toRow = this.reversed ? 7 - toRank : 7 - toRank;
+
+    let ax = cellSize * (fromCol + 1.0) - thickness * 0.5;
+    let ay = cellSize * (fromRow + 1.0);
+    let bx = cellSize * (toCol + 1.0) - thickness * 0.5;
+    let by = cellSize * (toRow + 1.0);
+
+    this.setLastMoveArrowLine(ax, ay, bx, by, 1);
+  }
+
+  private setLastMoveArrowLine = (ax: number, ay: number, bx: number, by: number, thickness: number) => {
+    
+    const vectX = bx - ax;
+    const vectY = by - ay;
+
+    const angleRad = Math.atan2(vectY, vectX) - Math.PI / 2.0;
+    const length = Math.sqrt(vectX * vectX + vectY * vectY);
+
+    this.renderer.setStyle(this.lastMoveBaseLine.nativeElement, 'width', thickness + 'px');
+    this.renderer.setStyle(this.lastMoveBaseLine.nativeElement, 'height', length + 'px');
+    this.renderer.setStyle(this.lastMoveBaseLine.nativeElement, 'left', ax + 'px');
+    this.renderer.setStyle(this.lastMoveBaseLine.nativeElement, 'top', ay + 'px');
+    this.renderer.setStyle(this.lastMoveBaseLine.nativeElement, 'transform', `rotate(${angleRad}rad)`);
+    this.renderer.setStyle(this.lastMoveBaseLine.nativeElement, '-ms-transform', `rotate(${angleRad}rad)`);
+    this.renderer.setStyle(this.lastMoveBaseLine.nativeElement, '-moz-transform', `rotate(${angleRad}rad)`);
+    this.renderer.setStyle(this.lastMoveBaseLine.nativeElement, '-webkit-transform', `rotate(${angleRad}rad)`);
+    this.renderer.setStyle(this.lastMoveBaseLine.nativeElement, 'transform-origin', `0% 0%`);
+    this.renderer.setStyle(this.lastMoveBaseLine.nativeElement, '-ms-transform-origin', `0% 0%`);
+    this.renderer.setStyle(this.lastMoveBaseLine.nativeElement, '-moz-transform-origin', `0% 0%`);
+    this.renderer.setStyle(this.lastMoveBaseLine.nativeElement, '-webkit-origin', `0% 0%`);
   }
 
   mustShowPiece = (row: number, col: number): boolean => {
@@ -419,6 +496,12 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
 
     if (! this.gameInProgress) { return; }
 
+    this.lastMove = {
+      from: this.dndHighlightedCell,
+      to: this.dndHoveringCell,
+    };
+    this.updateLastMoveArrow();
+
     this.askComputerMoveIfAppropriate();
   }
 
@@ -450,20 +533,39 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
 
   private commitComputerMove = async (from: string, to: string) => {
 
+    const fromCell = this.algebraicToChessCell(from);
+    const toCell = this.algebraicToChessCell(to);
+
     await this.chessService.checkAndDoMove(
-      this.algebraicToChessCell(from),
-      this.algebraicToChessCell(to)
+      fromCell,
+      toCell,
     );
+
+    this.lastMove = {
+      from: fromCell,
+      to: toCell,
+    };
+    this.updateLastMoveArrow();
 
     this.finishComputerMove();
   }
 
   private commitComputerMoveWithPromotion = async (from: string, to: string, promotion: string) => {
+
+    const fromCell = this.algebraicToChessCell(from);
+    const toCell = this.algebraicToChessCell(to);
+
     await this.chessService.checkAndDoMoveWithPromotion(
-      this.algebraicToChessCell(from),
-      this.algebraicToChessCell(to),
+      fromCell,
+      toCell,
       promotion
     );
+
+    this.lastMove = {
+      from: fromCell,
+      to: toCell,
+    };
+    this.updateLastMoveArrow();
 
     this.finishComputerMove();
   }

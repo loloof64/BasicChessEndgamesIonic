@@ -32,29 +32,31 @@
     </ng-container>
   
     <ng-container>
-        <div class="empty-zone"></div>
-        <div 
-          class="coord" 
-          *ngFor="let col of [0,1,2,3,4,5,6,7]"
-          [style.font-size.px]="coordinateFontSize()"
-          
-        >{{fileCoordinate(col)}}</div>
-        <div class="empty-zone">
-          <div [class]="turnClass()"></div>
-        </div>
-      </ng-container>
+      <div class="empty-zone"></div>
+      <div 
+        class="coord" 
+        *ngFor="let col of [0,1,2,3,4,5,6,7]"
+        [style.font-size.px]="coordinateFontSize()"
+        
+      >{{fileCoordinate(col)}}</div>
+      <div class="empty-zone">
+        <div [class]="turnClass()"></div>
+      </div>
+    </ng-container>
 
-      <div
-        *ngIf="dndHasStarted()"
-        class="dndGuideLine"
-        #horizontalGuide
-      ></div>
-      <div
-        *ngIf="dndHasStarted()"
-        class="dndGuideLine"
-        #verticalGuide
-      ></div>
   </div>
+
+  <div
+    *ngIf="dndHasStarted()"
+    class="dndGuideLine"
+    #horizontalGuide
+  ></div>
+  <div
+    *ngIf="dndHasStarted()"
+    class="dndGuideLine"
+    #verticalGuide
+  ></div>
+  
   <img
     *ngIf="dndHasStarted()"
     [src]="dndPieceImageSrc()"
@@ -80,4 +82,23 @@
     (touchend)="dragEnd($event)"
     (touchmove)="dragMove($event)"
   ></div>
+
+  <div
+    *ngIf="mustShowLastMove()"
+    class="lastMoveArrow"
+    #lastMoveBaseLine
+  >
+  </div>
+  <div
+    *ngIf="mustShowLastMove()"
+    class="lastMoveArrow"
+    #lastMoveArrow1
+  >
+  </div>
+  <div
+    *ngIf="mustShowLastMove()"
+    class="lastMoveArrow"
+    #lastMoveArrow2
+  >
+  </div>
 </ng-container>
