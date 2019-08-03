@@ -49,6 +49,7 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
   private computerIsThinking = false;
   private lastMove: ChessMove;
   private lastMoveActive = true;
+  private engineDepth = 14;
   
   allFilesCoordinates: string [] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
   allRanksCoordinates: string [] = ['1', '2', '3', '4', '5', '6', '7', '8'];
@@ -386,7 +387,7 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
       `position fen ${currentPosition}`
     );
     this.engineCommunicationLayer.postMessage(
-      'go depth 12'
+      'go depth ' + this.engineDepth
     );
   }
 
