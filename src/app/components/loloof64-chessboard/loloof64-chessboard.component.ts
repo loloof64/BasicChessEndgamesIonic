@@ -373,6 +373,8 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
   }
 
   askComputerMoveIfAppropriate = () => {
+    if (! this.gameInProgress) { return; }
+
     const whiteToPlay = this.chessService.isWhiteTurn();
     const computerToPlay = (whiteToPlay && this.whitePlayerType === PlayerType.Computer) ||
       (!whiteToPlay && this.blackPlayerType === PlayerType.Computer);
@@ -605,7 +607,6 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
 
   private commitHumanMove = async () => {
     this.piecesValues = this.piecesValuesFromPosition();
-    this.checkAndUpdateGameFinishedStatus();
 
     if (! this.gameInProgress) { return; }
 
@@ -614,6 +615,7 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
       to: this.dndHoveringCell,
     };
     this.updateLastMoveArrow();
+    await this.checkAndUpdateGameFinishedStatus();
 
     this.askComputerMoveIfAppropriate();
   }
@@ -683,9 +685,9 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
     this.finishComputerMove();
   }
 
-  private finishComputerMove = () => {
+  private finishComputerMove = async () => {
     this.piecesValues = this.piecesValuesFromPosition();
-    this.checkAndUpdateGameFinishedStatus();
+    await this.checkAndUpdateGameFinishedStatus();
     this.computerIsThinking = false;
     this.gotReady.emit();
   }
