@@ -7,15 +7,21 @@
 </ion-header>
 
 <ion-content>
-    <ion-spinner 
-      color="primary"
-      *ngIf="boardBusy"
-    ></ion-spinner>
-    <loloof64-chessboard 
-      [size]="boardSize"
-      [reversed]="false"
-      (gotReady)="setBoardReadyStatus()"
-      (gotBusy)="setBoardBusyStatus()"
-      #board
-    ></loloof64-chessboard>
+    <div>
+        <ion-spinner 
+        color="primary"
+        *ngIf="boardBusy"
+      ></ion-spinner>
+      <loloof64-chessboard 
+        [size]="boardSize"
+        [reversed]="false"
+        (gotReady)="setBoardReadyStatus()"
+        (gotBusy)="setBoardBusyStatus()"
+        #board
+      ></loloof64-chessboard>
+    </div>
+    <loloof64-chess-history
+      columnsCount="3"
+    >
+    </loloof64-chess-history>
 </ion-content>

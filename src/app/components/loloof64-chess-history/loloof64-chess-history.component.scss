@@ -1,0 +1,26 @@
+@mixin header-cell {
+    display: inline-flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.8em;
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
+}
+
+.header {
+    display: inline-flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    font-weight: bold;
+}
+
+.header-num {
+    @include header-cell();
+    width: 1.6rem;
+}
+
+.header-side {
+    @include header-cell();
+    width: 3.0rem;
+}
