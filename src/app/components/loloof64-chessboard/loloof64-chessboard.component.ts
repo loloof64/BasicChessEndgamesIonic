@@ -385,6 +385,7 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
     this.gotBusy.emit();
 
     const currentPosition = this.chessService.getCurrentPosition();
+
     this.engineCommunicationLayer.postMessage(
       `position fen ${currentPosition}`
     );
@@ -662,7 +663,7 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
     };
     this.updateLastMoveArrow();
 
-    this.finishComputerMove();
+    await this.finishComputerMove();
   }
 
   private commitComputerMoveWithPromotion = async (from: string, to: string, promotion: string) => {
@@ -682,7 +683,7 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
     };
     this.updateLastMoveArrow();
 
-    this.finishComputerMove();
+    await this.finishComputerMove();
   }
 
   private finishComputerMove = async () => {
@@ -690,6 +691,8 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
     await this.checkAndUpdateGameFinishedStatus();
     this.computerIsThinking = false;
     this.gotReady.emit();
+
+    this.askComputerMoveIfAppropriate();
   }
 
   private algebraicToChessCell = (coords: string): ChessCell => {
@@ -744,6 +747,7 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
       this.engineIsReady = true;
     } else {
       const match = message.match(/^bestmove ([a-h][1-8])([a-h][1-8])([qrbn])?/);
+
       if (match) {
         const from = match[1];
         const to = match[2];
