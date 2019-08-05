@@ -52,6 +52,7 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
   private lastMove: ChessMove;
   private lastMoveActive = true;
   private engineDepth = 14;
+  private firstMove = true;
   
   allFilesCoordinates: string [] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
   allRanksCoordinates: string [] = ['1', '2', '3', '4', '5', '6', '7', '8'];
@@ -360,6 +361,7 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
     } else {
       this.chessService.newGame();
     }
+    this.firstMove = true;
     this.piecesValues = this.piecesValuesFromPosition();
     this.engineCommunicationLayer.postMessage('ucinewgame');
     this.engineCommunicationLayer.postMessage(
@@ -619,12 +621,21 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
     };
     this.updateLastMoveArrow();
     this.sendLastMoveEvent();
+    this.firstMove = false;
     await this.checkAndUpdateGameFinishedStatus();
 
     this.askComputerMoveIfAppropriate();
   }
 
   private sendLastMoveEvent = () => {
+    if ( this.chessService.isWhiteTurn() && this.firstMove) {
+      // Move have already been commited but move number is not yet updated
+      this.newMoveNumberAvailable.emit((this.chessService.getCurrentMoveNumber() - 1).toString());
+      this.newMoveFanAvailable.emit('...');
+    } else if ( ! this.chessService.isWhiteTurn() ) {
+      // Move have already been commited
+      this.newMoveNumberAvailable.emit((this.chessService.getCurrentMoveNumber()).toString());
+    }
     const lastMoveFan = this.chessService.lastMoveFAN();
     this.newMoveFanAvailable.emit(lastMoveFan);
   }
@@ -671,6 +682,7 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
     };
     this.updateLastMoveArrow();
     this.sendLastMoveEvent();
+    this.firstMove = false;
 
     await this.finishComputerMove();
   }
@@ -692,6 +704,7 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
     };
     this.updateLastMoveArrow();
     this.sendLastMoveEvent();
+    this.firstMove = false;
 
     await this.finishComputerMove();
   }

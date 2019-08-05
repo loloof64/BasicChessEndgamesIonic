@@ -86,4 +86,9 @@ export class Loloof64ChessLogicService {
 
     return lastMoveFAN;
   }
+
+  getCurrentMoveNumber = (): number => {
+    const position = this.game.fen();
+    return parseInt(position.split(' ')[5]);
+  }
 }

@@ -17,7 +17,8 @@
         [reversed]="false"
         (gotReady)="setBoardReadyStatus()"
         (gotBusy)="setBoardBusyStatus()"
-        (newMoveFanAvailable)="addMoveToHistory($event)"
+        (newMoveFanAvailable)="addContentToHistory($event)"
+        (newMoveNumberAvailable)="addContentToHistory($event)"
         #board
       ></loloof64-chessboard>
     </div>

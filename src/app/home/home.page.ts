@@ -44,8 +44,8 @@ export class HomePage implements OnInit, DoCheck {
     this.boardBusy = true;
   }
 
-  addMoveToHistory = (move: string) => {
-    this.history.addContent(move);
+  addContentToHistory = (content: string) => {
+    this.history.addContent(content);
   }
 
 }
