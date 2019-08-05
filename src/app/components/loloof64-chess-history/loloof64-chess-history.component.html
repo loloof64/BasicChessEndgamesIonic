@@ -7,20 +7,22 @@
 
   <div *ngFor="let lineIndex of realLinesIndexes()">
     <loloof64-chess-history-cell
-      [value]="cellsContent[lineIndex * 3]"
+      [value]="cellsContent[lineIndex * 3].fan"
       classes="history-cell num"
     ></loloof64-chess-history-cell>
 
     <loloof64-chess-history-cell
       *ngIf="notAMissingCell(lineIndex * 3 + 1)"
-      [value]="cellsContent[lineIndex * 3 + 1]"
+      [value]="cellsContent[lineIndex * 3 + 1].fan"
       classes="history-cell move"
+      (click)="sendPositionRequestedEvent(lineIndex * 3 + 1)"
     ></loloof64-chess-history-cell>
 
     <loloof64-chess-history-cell
     *ngIf="notAMissingCell(lineIndex * 3 + 2)"
-      [value]="cellsContent[lineIndex * 3 + 2]"
+      [value]="cellsContent[lineIndex * 3 + 2].fan"
       classes="history-cell move"
+      (click)="sendPositionRequestedEvent(lineIndex * 3 + 2)"
     ></loloof64-chess-history-cell>
   </div>
 </div>

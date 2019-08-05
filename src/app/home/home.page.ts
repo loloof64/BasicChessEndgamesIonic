@@ -1,6 +1,7 @@
 import { Component, OnInit, DoCheck, ViewChild } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { PlayerType } from '../components/loloof64-chessboard/PlayerType';
+import { CompleteHistoryCellContent } from '../components/loloof64-chessboard/loloof64-chessboard.component';
 
 @Component({
   selector: 'app-home',
@@ -46,6 +47,10 @@ export class HomePage implements OnInit, DoCheck {
 
   addContentToHistory = (content: string) => {
     this.history.addContent(content);
+  }
+
+  requestPositionOnBoard = (positionData: CompleteHistoryCellContent) => {
+    this.board.requestPositionIfPossible(positionData);
   }
 
 }

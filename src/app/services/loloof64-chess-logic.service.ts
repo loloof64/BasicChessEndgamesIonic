@@ -91,4 +91,8 @@ export class Loloof64ChessLogicService {
     const position = this.game.fen();
     return parseInt(position.split(' ')[5]);
   }
+
+  loadPosition = (positionFen: string) => {
+    this.game.load(positionFen);
+  }
 }

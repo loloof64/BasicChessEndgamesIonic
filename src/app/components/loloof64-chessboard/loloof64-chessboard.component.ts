@@ -14,6 +14,17 @@ interface ChessMove {
   to: ChessCell;
 }
 
+interface NumberHistoryCellContent {
+  fan: string; // Move number, keeping fan name as attribute for inheritance
+}
+
+export interface CompleteHistoryCellContent extends NumberHistoryCellContent {
+  position: string; // related position in FEN notation
+  lastMove: ChessMove; // move to highlight
+  historyPly: number; // index of ply inside history (always 1 for first black move)
+  fan: string; // Move in figurine notation (FAN)
+}
+
 @Component({
   selector: 'loloof64-chessboard',
   templateUrl: './loloof64-chessboard.component.html',
@@ -25,10 +36,10 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
   @Input() size = 200.0;
   @Input() reversed = false;
 
-  @Output() public gotReady: EventEmitter<void> = new EventEmitter<void>();
-  @Output() public gotBusy: EventEmitter<void> = new EventEmitter<void>();
-  @Output() public newMoveFanAvailable: EventEmitter<string> = new EventEmitter<string>();
-  @Output() public newMoveNumberAvailable: EventEmitter<string> = new EventEmitter<string>();
+  @Output() public gotReady = new EventEmitter<void>();
+  @Output() public gotBusy = new EventEmitter<void>();
+  @Output() public newMoveFanAvailable = new EventEmitter<CompleteHistoryCellContent>();
+  @Output() public newMoveNumberAvailable = new EventEmitter<NumberHistoryCellContent>();
 
   @ViewChild('root') root: ElementRef;
   @ViewChild('click_zone') clickZone: ElementRef;
@@ -53,6 +64,7 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
   private lastMoveActive = true;
   private engineDepth = 14;
   private firstMove = true;
+  private historyPly = -1;
   
   allFilesCoordinates: string [] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
   allRanksCoordinates: string [] = ['1', '2', '3', '4', '5', '6', '7', '8'];
@@ -325,6 +337,19 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
     }
   }
 
+  requestPositionIfPossible = (positionData: CompleteHistoryCellContent) => {
+    if ( ! this.gameInProgress ) {
+      const positionToLoad = positionData.position;
+      const lastMoveToLoad = positionData.lastMove;
+      if (positionToLoad && lastMoveToLoad) {
+        this.chessService.loadPosition(positionData.position);
+        this.lastMove = positionData.lastMove;
+      }
+      this.updateLastMoveArrow();
+      this.piecesValues = this.piecesValuesFromPosition();
+    }
+  }
+
   validatePromotion = async (value: string) => {
     this.modalController.dismiss();
     const legalMove = await this.chessService.checkAndDoMoveWithPromotion(
@@ -361,6 +386,8 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
     } else {
       this.chessService.newGame();
     }
+    const whiteTurn = this.chessService.isWhiteTurn();
+    this.historyPly = whiteTurn ? 0 : 1;
     this.firstMove = true;
     this.piecesValues = this.piecesValuesFromPosition();
     this.engineCommunicationLayer.postMessage('ucinewgame');
@@ -622,6 +649,7 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
     this.updateLastMoveArrow();
     this.sendLastMoveEvent();
     this.firstMove = false;
+    this.historyPly++;
     await this.checkAndUpdateGameFinishedStatus();
 
     this.askComputerMoveIfAppropriate();
@@ -630,14 +658,28 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
   private sendLastMoveEvent = () => {
     if ( this.chessService.isWhiteTurn() && this.firstMove) {
       // Move have already been commited but move number is not yet updated
-      this.newMoveNumberAvailable.emit((this.chessService.getCurrentMoveNumber() - 1).toString());
-      this.newMoveFanAvailable.emit('...');
+      this.newMoveNumberAvailable.emit({
+        fan: (this.chessService.getCurrentMoveNumber() - 1).toString(),
+      });
+      this.newMoveFanAvailable.emit({
+        fan: '...',
+        position: undefined,
+        lastMove: undefined,
+        historyPly: undefined,
+      });
     } else if ( ! this.chessService.isWhiteTurn() ) {
       // Move have already been commited
-      this.newMoveNumberAvailable.emit((this.chessService.getCurrentMoveNumber()).toString());
+      this.newMoveNumberAvailable.emit({
+        fan: (this.chessService.getCurrentMoveNumber()).toString()
+      });
     }
     const lastMoveFan = this.chessService.lastMoveFAN();
-    this.newMoveFanAvailable.emit(lastMoveFan);
+    this.newMoveFanAvailable.emit({
+      fan: lastMoveFan,
+      position: this.chessService.getCurrentPosition(),
+      historyPly: this.historyPly,
+      lastMove: this.lastMove,
+    });
   }
 
   private checkAndUpdateGameFinishedStatus = async () => {
@@ -683,6 +725,7 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
     this.updateLastMoveArrow();
     this.sendLastMoveEvent();
     this.firstMove = false;
+    this.historyPly++;
 
     await this.finishComputerMove();
   }
@@ -705,6 +748,7 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
     this.updateLastMoveArrow();
     this.sendLastMoveEvent();
     this.firstMove = false;
+    this.historyPly++;
 
     await this.finishComputerMove();
   }
