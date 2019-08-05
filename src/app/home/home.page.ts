@@ -10,6 +10,7 @@ import { PlayerType } from '../components/loloof64-chessboard/PlayerType';
 export class HomePage implements OnInit, DoCheck {
 
   @ViewChild('board') board: any;
+  @ViewChild('history') history: any;
   
   boardSize: number;
   boardBusy = true;
@@ -41,6 +42,10 @@ export class HomePage implements OnInit, DoCheck {
 
   setBoardBusyStatus = () => {
     this.boardBusy = true;
+  }
+
+  addMoveToHistory = (move: string) => {
+    this.history.addContent(move);
   }
 
 }

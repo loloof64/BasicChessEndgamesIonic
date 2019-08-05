@@ -71,4 +71,19 @@ export class Loloof64ChessLogicService {
   isWhiteTurn = () => {
     return this.game.turn() === 'w';
   }
+
+  lastMoveFAN = (): string => {
+    const history = this.game.history();
+    const lastMoveSAN = history[history.length - 1];
+    const lastMoveDoneByWhite = this.game.turn() === 'b';
+
+    let lastMoveFAN = lastMoveSAN;
+    lastMoveFAN = lastMoveFAN.replace(/N/, lastMoveDoneByWhite ? '\u2658' : '\u265E');
+    lastMoveFAN = lastMoveFAN.replace(/B/, lastMoveDoneByWhite ? '\u2657' : '\u265D');
+    lastMoveFAN = lastMoveFAN.replace(/R/, lastMoveDoneByWhite ? '\u2656' : '\u265C');
+    lastMoveFAN = lastMoveFAN.replace(/Q/, lastMoveDoneByWhite ? '\u2655' : '\u265B');
+    lastMoveFAN = lastMoveFAN.replace(/K/, lastMoveDoneByWhite ? '\u2654' : '\u265A');
+
+    return lastMoveFAN;
+  }
 }

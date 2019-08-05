@@ -6,21 +6,15 @@ import { Component, OnInit, Input } from '@angular/core';
   styleUrls: ['./loloof64-chess-history.component.scss'],
 })
 export class Loloof64ChessHistoryComponent implements OnInit {
-
-  private lineIndex = 0;
   
   cellsContent = [];
   linesIndexes = [];
+  private currentLineIndex = 0;
 
   constructor() { }
 
   ngOnInit() {
     this.clearContent();
-
-    for (let i = 0; i < 15; i++) {
-      this.cellsContent.push(i);
-      this.updateLinesCount();
-    }
   }
 
   realLinesIndexes() {
@@ -34,16 +28,19 @@ export class Loloof64ChessHistoryComponent implements OnInit {
     return index < this.cellsContent.length;
   }
 
-  private clearContent() {
-    this.linesIndexes = [];
-    this.cellsContent = [];
+  addContent(value: string) {
+    this.cellsContent.push(value);
+    // Updating lines indexes
+    if (this.cellsContent.length % 3 === 0) {
+      this.linesIndexes.push(this.currentLineIndex);
+      this.currentLineIndex++;
+    }
   }
 
-  private updateLinesCount() {
-    if (this.cellsContent.length % 3 === 0) {
-      this.linesIndexes.push(this.lineIndex);
-      this.lineIndex++;
-    }
+  private clearContent() {
+    this.currentLineIndex = 0;
+    this.linesIndexes = [];
+    this.cellsContent = [];
   }
 
 }

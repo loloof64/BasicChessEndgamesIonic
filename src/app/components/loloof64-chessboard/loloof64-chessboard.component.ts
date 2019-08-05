@@ -27,6 +27,8 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
 
   @Output() public gotReady: EventEmitter<void> = new EventEmitter<void>();
   @Output() public gotBusy: EventEmitter<void> = new EventEmitter<void>();
+  @Output() public newMoveFanAvailable: EventEmitter<string> = new EventEmitter<string>();
+  @Output() public newMoveNumberAvailable: EventEmitter<string> = new EventEmitter<string>();
 
   @ViewChild('root') root: ElementRef;
   @ViewChild('click_zone') clickZone: ElementRef;
@@ -616,9 +618,15 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
       to: this.dndHoveringCell,
     };
     this.updateLastMoveArrow();
+    this.sendLastMoveEvent();
     await this.checkAndUpdateGameFinishedStatus();
 
     this.askComputerMoveIfAppropriate();
+  }
+
+  private sendLastMoveEvent = () => {
+    const lastMoveFan = this.chessService.lastMoveFAN();
+    this.newMoveFanAvailable.emit(lastMoveFan);
   }
 
   private checkAndUpdateGameFinishedStatus = async () => {
@@ -662,6 +670,7 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
       to: toCell,
     };
     this.updateLastMoveArrow();
+    this.sendLastMoveEvent();
 
     await this.finishComputerMove();
   }
@@ -682,6 +691,7 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
       to: toCell,
     };
     this.updateLastMoveArrow();
+    this.sendLastMoveEvent();
 
     await this.finishComputerMove();
   }

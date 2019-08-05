@@ -17,11 +17,13 @@
         [reversed]="false"
         (gotReady)="setBoardReadyStatus()"
         (gotBusy)="setBoardBusyStatus()"
+        (newMoveFanAvailable)="addMoveToHistory($event)"
         #board
       ></loloof64-chessboard>
     </div>
     <loloof64-chess-history
       columnsCount="30"
+      #history
     >
     </loloof64-chess-history>
 </ion-content>
