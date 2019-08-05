@@ -27,7 +27,7 @@ export class HomePage implements OnInit, DoCheck {
 
   private adjustBoardSize = () => {
     this.boardSize = this.platform.isPortrait() ?
-      this.platform.width() :
+      this.platform.width() * 0.8 :
       this.platform.height() - 56;
   }
 

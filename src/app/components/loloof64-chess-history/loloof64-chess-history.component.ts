@@ -7,15 +7,30 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class Loloof64ChessHistoryComponent implements OnInit {
 
-  @Input() columnsCount = 1;
-  columns: number[];
+  private lineIndex = 0;
+  
+  cellsContent = [];
+  linesIndexes = [];
 
   constructor() { }
 
   ngOnInit() {
-    this.columns = [];
-    for (let columnIndex = 0; columnIndex < this.columnsCount; columnIndex++) {
-      this.columns.push(columnIndex);
+    this.linesIndexes = [];
+    this.cellsContent = [];
+
+    for (let i = 0; i < 26; i++) {
+      this.cellsContent.push(i);
+      this.updateLinesCount();
+    }
+
+    console.log(this.cellsContent)
+    console.log(this.linesIndexes)
+  }
+
+  private updateLinesCount() {
+    if (this.cellsContent.length % 3 === 0) {
+      this.linesIndexes.push(this.lineIndex);
+      this.lineIndex++;
     }
   }
 

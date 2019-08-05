@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
   selector: 'loloof64-chess-history-cell',
@@ -6,6 +6,9 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./loloof64-chess-history-cell.component.scss'],
 })
 export class Loloof64ChessHistoryCellComponent implements OnInit {
+
+  @Input() value;
+  @Input() classes;
 
   constructor() { }
 
