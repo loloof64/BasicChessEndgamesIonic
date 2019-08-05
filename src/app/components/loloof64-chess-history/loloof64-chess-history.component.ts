@@ -15,16 +15,28 @@ export class Loloof64ChessHistoryComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    this.linesIndexes = [];
-    this.cellsContent = [];
+    this.clearContent();
 
-    for (let i = 0; i < 26; i++) {
+    for (let i = 0; i < 15; i++) {
       this.cellsContent.push(i);
       this.updateLinesCount();
     }
+  }
 
-    console.log(this.cellsContent)
-    console.log(this.linesIndexes)
+  realLinesIndexes() {
+    const values = [...this.linesIndexes];
+    const thereIsIncompleteLine = this.cellsContent.length % 3 > 0;
+    if (thereIsIncompleteLine) { values.push(values.length); }
+    return values;
+  }
+
+  notAMissingCell(index: number) {
+    return index < this.cellsContent.length;
+  }
+
+  private clearContent() {
+    this.linesIndexes = [];
+    this.cellsContent = [];
   }
 
   private updateLinesCount() {

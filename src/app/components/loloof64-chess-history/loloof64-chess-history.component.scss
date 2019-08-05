@@ -3,7 +3,7 @@
 @mixin header-cell {
     display: inline-flex;
     flex-direction: row;
-    justify-content: center;
+    justify-content: flex-end;
     align-items: center;
     font-size: $font-size;
     border-right: 1px solid black;

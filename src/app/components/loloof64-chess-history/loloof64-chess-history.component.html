@@ -5,18 +5,20 @@
     <div class="header-side">Blacks</div>
   </div>
 
-  <div *ngFor="let lineIndex of linesIndexes">
+  <div *ngFor="let lineIndex of realLinesIndexes()">
     <loloof64-chess-history-cell
       [value]="cellsContent[lineIndex * 3]"
       classes="history-cell num"
     ></loloof64-chess-history-cell>
 
     <loloof64-chess-history-cell
+      *ngIf="notAMissingCell(lineIndex * 3 + 1)"
       [value]="cellsContent[lineIndex * 3 + 1]"
       classes="history-cell move"
     ></loloof64-chess-history-cell>
 
     <loloof64-chess-history-cell
+    *ngIf="notAMissingCell(lineIndex * 3 + 2)"
       [value]="cellsContent[lineIndex * 3 + 2]"
       classes="history-cell move"
     ></loloof64-chess-history-cell>
