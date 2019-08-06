@@ -14,14 +14,14 @@
     <loloof64-chess-history-cell
       *ngIf="notAMissingCell(lineIndex * 3 + 1)"
       [value]="cellsContent[lineIndex * 3 + 1].fan"
-      classes="history-cell move"
+      [classes]="getCellClass(lineIndex * 3 + 1)"
       (click)="sendPositionRequestedEvent(lineIndex * 3 + 1)"
     ></loloof64-chess-history-cell>
 
     <loloof64-chess-history-cell
-    *ngIf="notAMissingCell(lineIndex * 3 + 2)"
+      *ngIf="notAMissingCell(lineIndex * 3 + 2)"
       [value]="cellsContent[lineIndex * 3 + 2].fan"
-      classes="history-cell move"
+      [classes]="getCellClass(lineIndex * 3 + 2)"
       (click)="sendPositionRequestedEvent(lineIndex * 3 + 2)"
     ></loloof64-chess-history-cell>
   </div>

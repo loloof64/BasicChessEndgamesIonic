@@ -53,4 +53,12 @@ export class HomePage implements OnInit, DoCheck {
     this.board.requestPositionIfPossible(positionData);
   }
 
+  clearHistorySelection = () => {
+    this.history.clearHighlightedPly();
+  }
+
+  updateSelectedHistoryPly = (plyIndex: number) => {
+    this.history.highlightPly(plyIndex);
+  }
+
 }

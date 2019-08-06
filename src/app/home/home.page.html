@@ -15,8 +15,10 @@
       <loloof64-chessboard 
         [size]="boardSize"
         [reversed]="false"
+        (gameStarted)="clearHistorySelection()"
         (gotReady)="setBoardReadyStatus()"
         (gotBusy)="setBoardBusyStatus()"
+        (positionLoaded)="updateSelectedHistoryPly($event)"
         (newMoveFanAvailable)="addContentToHistory($event)"
         (newMoveNumberAvailable)="addContentToHistory($event)"
         #board

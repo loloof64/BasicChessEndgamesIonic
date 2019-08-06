@@ -18,3 +18,7 @@
     @include cellContent();
     width: $move-width
 }
+
+.history-cell.move.highlighted {
+    background-color: rgb(41, 97, 216);
+}

@@ -27,6 +27,7 @@ export class Loloof64ChessHistoryComponent implements OnInit {
   cellsContent: HistoryCellContent[] = [];
   linesIndexes = [];
   private currentLineIndex = 0;
+  private highlitedPly = undefined;
 
   @Output() positionRequestedEvent = new EventEmitter<HistoryCellContent>();
 
@@ -58,6 +59,21 @@ export class Loloof64ChessHistoryComponent implements OnInit {
 
   sendPositionRequestedEvent = (cellIndex: number) => {
     this.positionRequestedEvent.emit(this.cellsContent[cellIndex]);
+  }
+
+  getCellClass = (cellIndex: number) => {
+    let cellPly = Math.floor(cellIndex / 3) * 2;
+    cellPly += (cellIndex - 1) % 3;
+
+    return cellPly === this.highlitedPly ? 'history-cell move highlighted' : 'history-cell move';
+  }
+
+  highlightPly = (ply: number) => {
+    this.highlitedPly = ply;
+  }
+
+  clearHighlightedPly = () => {
+    this.highlitedPly = undefined;
   }
 
   private clearContent = () => {

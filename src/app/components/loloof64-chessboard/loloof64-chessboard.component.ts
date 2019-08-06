@@ -38,6 +38,8 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
 
   @Output() public gotReady = new EventEmitter<void>();
   @Output() public gotBusy = new EventEmitter<void>();
+  @Output() public gameStarted = new EventEmitter<void>();
+  @Output() public positionLoaded = new EventEmitter<number>(); // emitting the ply index (odd = black, even = white)
   @Output() public newMoveFanAvailable = new EventEmitter<CompleteHistoryCellContent>();
   @Output() public newMoveNumberAvailable = new EventEmitter<NumberHistoryCellContent>();
 
@@ -347,6 +349,7 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
       }
       this.updateLastMoveArrow();
       this.piecesValues = this.piecesValuesFromPosition();
+      this.positionLoaded.emit(positionData.historyPly);
     }
   }
 
@@ -386,6 +389,7 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
     } else {
       this.chessService.newGame();
     }
+    this.gameStarted.emit();
     const whiteTurn = this.chessService.isWhiteTurn();
     this.historyPly = whiteTurn ? 0 : 1;
     this.firstMove = true;
