@@ -7,27 +7,28 @@
 </ion-header>
 
 <ion-content>
-    <div>
-        <ion-spinner 
-        color="primary"
-        *ngIf="boardBusy"
-      ></ion-spinner>
-      <loloof64-chessboard 
-        [size]="boardSize"
-        [reversed]="false"
-        (gameStarted)="clearHistorySelection()"
-        (gotReady)="setBoardReadyStatus()"
-        (gotBusy)="setBoardBusyStatus()"
-        (positionLoaded)="updateSelectedHistoryPly($event)"
-        (newMoveFanAvailable)="addContentToHistory($event)"
-        (newMoveNumberAvailable)="addContentToHistory($event)"
-        #board
-      ></loloof64-chessboard>
-    </div>
-    <loloof64-chess-history
-      columnsCount="30"
-      (positionRequestedEvent)="requestPositionOnBoard($event)"
-      #history
-    >
-    </loloof64-chess-history>
+  <ion-button color="primary" (click)="startNewGame()">
+      <ion-icon name="refresh"></ion-icon>
+  </ion-button>
+  <ion-spinner 
+    color="primary"
+    *ngIf="boardBusy"
+  ></ion-spinner>
+  <loloof64-chessboard 
+    [size]="boardSize"
+    [reversed]="false"
+    (gameStarted)="clearHistorySelection()"
+    (gotReady)="setBoardReadyStatus()"
+    (gotBusy)="setBoardBusyStatus()"
+    (positionLoaded)="updateSelectedHistoryPly($event)"
+    (newMoveFanAvailable)="addContentToHistory($event)"
+    (newMoveNumberAvailable)="addContentToHistory($event)"
+    #board
+  ></loloof64-chessboard>
+  <loloof64-chess-history
+    columnsCount="30"
+    (positionRequestedEvent)="requestPositionOnBoard($event)"
+    #history
+  >
+  </loloof64-chess-history>
 </ion-content>

@@ -36,9 +36,16 @@ export class HomePage implements OnInit, DoCheck {
   setBoardReadyStatus = () => {
     this.boardBusy = false;
     if (this.needToStartGame) {
-      this.board.startNewGame(PlayerType.Computer, PlayerType.Computer, '8/8/8/8/4pk2/8/8/4K3 b - - 0 1');
-      this.needToStartGame = false;
+      this.startNewGame();
     }
+  }
+
+  startNewGame = () => {
+    ////////////////////////////////////////
+    console.log('starting a new game');
+    /////////////////////////////////////////
+    this.board.startNewGame(PlayerType.Computer, PlayerType.Computer, '8/8/8/8/4pk2/8/8/4K3 b - - 0 1');
+    this.needToStartGame = false;
   }
 
   setBoardBusyStatus = () => {
