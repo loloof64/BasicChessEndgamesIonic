@@ -41,9 +41,7 @@ export class HomePage implements OnInit, DoCheck {
   }
 
   startNewGame = () => {
-    ////////////////////////////////////////
-    console.log('starting a new game');
-    /////////////////////////////////////////
+    this.history.clearContent();
     this.board.startNewGame(PlayerType.Computer, PlayerType.Computer, '8/8/8/8/4pk2/8/8/4K3 b - - 0 1');
     this.needToStartGame = false;
   }
