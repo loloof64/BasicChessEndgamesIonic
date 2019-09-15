@@ -74,6 +74,11 @@ export class Loloof64ChessLogicService {
 
   lastMoveFAN = (): string => {
     const history = this.game.history();
+
+    if (history.length < 1) {
+      return undefined;
+    }
+
     const lastMoveSAN = history[history.length - 1];
     const lastMoveDoneByWhite = this.game.turn() === 'b';
 

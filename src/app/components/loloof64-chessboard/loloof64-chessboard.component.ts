@@ -382,6 +382,9 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
   }
 
   startNewGame = (white: PlayerType, black: PlayerType, startPosition: string) => {
+    this.gameInProgress = false;
+    this.computerIsThinking = false;
+    this.firstMove = true;
     this.whitePlayerType = white;
     this.blackPlayerType = black;
     if (startPosition) {
@@ -392,7 +395,6 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
     this.gameStarted.emit();
     const whiteTurn = this.chessService.isWhiteTurn();
     this.historyPly = whiteTurn ? 0 : 1;
-    this.firstMove = true;
     this.piecesValues = this.piecesValuesFromPosition();
     this.engineCommunicationLayer.postMessage('ucinewgame');
     this.engineCommunicationLayer.postMessage(
@@ -642,6 +644,9 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
   }
 
   private commitHumanMove = async () => {
+    if ( ! this.gameInProgress) {
+      return;
+    }
     this.piecesValues = this.piecesValuesFromPosition();
 
     if (! this.gameInProgress) { return; }
@@ -713,6 +718,9 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
   }
 
   private commitComputerMove = async (from: string, to: string) => {
+    if ( ! this.gameInProgress) {
+      return;
+    }
 
     const fromCell = this.algebraicToChessCell(from);
     const toCell = this.algebraicToChessCell(to);
@@ -735,6 +743,9 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
   }
 
   private commitComputerMoveWithPromotion = async (from: string, to: string, promotion: string) => {
+    if ( ! this.gameInProgress) {
+      return;
+    }
 
     const fromCell = this.algebraicToChessCell(from);
     const toCell = this.algebraicToChessCell(to);
