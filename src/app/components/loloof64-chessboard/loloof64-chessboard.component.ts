@@ -376,11 +376,6 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
     return ![null, undefined].includes(this.dndHighlightedCell);
   }
 
-  dndPieceImageSrc = () => {
-    const dndPieceValue = this.piecesValues[this.dndHighlightedCell.rank][this.dndHighlightedCell.file];
-    return this.getPieceRawPath(dndPieceValue);
-  }
-
   startNewGame = (white: PlayerType, black: PlayerType, startPosition: string) => {
     this.gameInProgress = false;
     this.computerIsThinking = false;
@@ -608,41 +603,6 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
     this.renderer.setStyle(this.lastMovePoint.nativeElement, '-webkit-origin', transformOrigin);
   }
 
-  mustShowPiece = (row: number, col: number): boolean => {
-    const pieceValue = this.piecesValues[this.getRank(row)][this.getFile(col)];
-    const hasNoPiece = pieceValue === undefined;
-    if (hasNoPiece) {
-      return false;
-    }
-
-    const dndStarted = this.dndHighlightedCell !== null;
-    if (dndStarted) {
-      return this.getRank(row) !== this.dndHighlightedCell.rank ||
-        this.getFile(col) !== this.dndHighlightedCell.file;
-    } else {
-      return true;
-    }
-  }
-
-  getCellImagesSize = () => {
-    return this.size / 9.0;
-  }
-
-  getCellImageLeft = (col: number) => {
-    const cellSize = this.size / 9.0;
-    return cellSize * (0.5 + col);
-  }
-
-  getCellImageTop = (row: number) => {
-    const cellSize = this.size / 9.0;
-    return cellSize * (0.5 + row);
-  }
-
-  getPiecePath = (row: number, col: number) => {
-    const pieceValue = this.piecesValues[this.getRank(row)][this.getFile(col)];
-    return this.getPieceRawPath(pieceValue);
-  }
-
   private commitHumanMove = async () => {
     if ( ! this.gameInProgress) {
       return;
@@ -784,28 +744,6 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
     return {
       file, rank
     } as ChessCell;
-  }
-
-  private getPieceRawPath = (value: string): string => {
-    let rawImageName;
-    switch (value) {
-      case 'P': rawImageName = 'Chess_plt45.svg'; break;
-      case 'N': rawImageName = 'Chess_nlt45.svg'; break;
-      case 'B': rawImageName = 'Chess_blt45.svg'; break;
-      case 'R': rawImageName = 'Chess_rlt45.svg'; break;
-      case 'Q': rawImageName = 'Chess_qlt45.svg'; break;
-      case 'K': rawImageName = 'Chess_klt45.svg'; break;
-
-      case 'p': rawImageName = 'Chess_pdt45.svg'; break;
-      case 'n': rawImageName = 'Chess_ndt45.svg'; break;
-      case 'b': rawImageName = 'Chess_bdt45.svg'; break;
-      case 'r': rawImageName = 'Chess_rdt45.svg'; break;
-      case 'q': rawImageName = 'Chess_qdt45.svg'; break;
-      case 'k': rawImageName = 'Chess_kdt45.svg'; break;
-      default: return undefined;
-    }
-
-    return `/assets/vectors/${rawImageName}`;
   }
 
   private isPromotionMove = () => {

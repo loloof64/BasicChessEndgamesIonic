@@ -1,2 +1,9 @@
 <div [class]="getCellClass()" #root>
+        <img 
+            *ngIf="mustShowPiece()" 
+            [src]="getPiecePath()"
+            [width]="cellSize"
+            [height]="cellSize"
+            class="cellImage"
+        />
 </div>
