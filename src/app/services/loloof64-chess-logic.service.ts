@@ -94,7 +94,7 @@ export class Loloof64ChessLogicService {
 
   getCurrentMoveNumber = (): number => {
     const position = this.game.fen();
-    return parseInt(position.split(' ')[5]);
+    return parseInt(position.split(' ')[5], 10);
   }
 
   loadPosition = (positionFen: string) => {

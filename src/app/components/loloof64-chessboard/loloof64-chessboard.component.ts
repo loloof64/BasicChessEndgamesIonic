@@ -8,6 +8,7 @@ import { ModalController, ToastController } from '@ionic/angular';
 import { Loloof64ChessEngineCommunicationService } from '../../services/loloof64-chess-engine-communication.service';
 import { Loloof64ChessPromotionPage } from '../../pages/loloof64-chess-promotion/loloof64-chess-promotion.page';
 import { PlayerType } from './PlayerType';
+import { getPieceRawPath } from './common';
 
 interface ChessMove {
   from: ChessCell;
@@ -202,6 +203,10 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
   }
 
   dragStart = (event: any) => {
+
+    ///////////////////////////
+    console.log("drag start")
+    /////////////////////////////
     event.preventDefault();
     event.stopPropagation();
 
@@ -212,6 +217,10 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
     const coordinatesInBoard = boardRawCoordinates !== undefined &&
       boardRawCoordinates.col >= 0 && boardRawCoordinates.col <= 7 &&
       boardRawCoordinates.row >= 0 && boardRawCoordinates.row <= 7;
+
+    //////////////////////////////////
+    console.log('in board', coordinatesInBoard);
+    ///////////////////////////////////
 
 
     if (coordinatesInBoard) {
@@ -337,6 +346,11 @@ export class Loloof64ChessboardComponent implements OnInit, OnChanges, OnDestroy
       this.renderer.setStyle(this.verticalGuide.nativeElement, 'width', width + 'px');
       this.renderer.setStyle(this.verticalGuide.nativeElement, 'height', height + 'px');
     }
+  }
+
+  dndPieceImageSrc = () => {
+    const dndPieceValue = this.piecesValues[this.dndHighlightedCell.rank][this.dndHighlightedCell.file];
+    return getPieceRawPath(dndPieceValue);
   }
 
   requestPositionIfPossible = (positionData: CompleteHistoryCellContent) => {
